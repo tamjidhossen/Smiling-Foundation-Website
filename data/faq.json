@@ -1,0 +1,52 @@
+{
+  "faq_categories": [
+    {
+      "id": 1,
+      "name": "General Questions",
+      "questions": [
+        {
+          "id": 1,
+          "question": "What is Smiling Foundation?",
+          "answer": "Smiling Foundation is a non-profit organization dedicated to creating positive change through sustainable community development and empowering underprivileged communities in Bangladesh."
+        },
+        {
+          "id": 2,
+          "question": "How can I get involved?",
+          "answer": "You can get involved by volunteering, donating, or participating in our events. Visit our volunteer page to register as a volunteer or our donation page to make a contribution."
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "name": "Volunteer Related",
+      "questions": [
+        {
+          "id": 3,
+          "question": "What are the requirements to become a volunteer?",
+          "answer": "To become a volunteer, you must be at least 18 years old, have a valid NID, and be willing to commit time to our causes. Some roles may require specific skills or experience."
+        },
+        {
+          "id": 4,
+          "question": "How much time do I need to commit?",
+          "answer": "Time commitment varies based on the type of volunteering you choose. Regular volunteers typically commit 4-8 hours per week, while event-based volunteers participate as per event schedules."
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "name": "Donations",
+      "questions": [
+        {
+          "id": 5,
+          "question": "Is my donation tax-deductible?",
+          "answer": "Yes, all donations to Smiling Foundation are tax-deductible. You will receive a receipt for your donation that you can use for tax purposes."
+        },
+        {
+          "id": 6,
+          "question": "How is my donation used?",
+          "answer": "Your donations directly support our community programs, including education initiatives, healthcare projects, and emergency relief efforts. We maintain full transparency in fund allocation."
+        }
+      ]
+    }
+  ]
+}

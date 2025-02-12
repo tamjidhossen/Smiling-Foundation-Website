@@ -1,0 +1,14 @@
+{
+  "hero_images": {
+    "home": "../img/hero/home-hero.jpg",
+    "about": "../img/hero/about-hero.jpg",
+    "blog": "../img/hero/blog-hero.jpg",
+    "contact": "../img/hero/contact-hero.jpg",
+    "donate": "../img/hero/donate-hero.jpg",
+    "gallery": "../img/hero/gallery-hero.jpg",
+    "projects": "../img/hero/projects-hero.jpg",
+    "team": "../img/hero/team-hero.jpg",
+    "volunteer": "../img/hero/volunteer-hero.jpg",
+    "faq": "../img/hero/faq.jpg"
+  }
+}

@@ -1,0 +1,30 @@
+{
+    "board_members": [
+        {
+            "name": "John Doe",
+            "position": "Chairman",
+            "image": "chairman.jpg",
+            "bio": "Over 20 years of experience in non-profit management",
+            "linkedin": "https://linkedin.com/in/johndoe"
+        },
+        {
+            "name": "Jane Smith",
+            "position": "Vice Chairman",
+            "image": "vice-chairman.jpg",
+            "bio": "Expert in sustainable development and community outreach",
+            "linkedin": "https://linkedin.com/in/janesmith"
+        }
+    ],
+    "core_team": [
+        {
+            "name": "Mike Johnson",
+            "position": "Project Manager",
+            "image": "manager1.jpg"
+        },
+        {
+            "name": "Sarah Malik",
+            "position": "Community Coordinator",
+            "image": "coordinator1.jpg"
+        }
+    ]
+}

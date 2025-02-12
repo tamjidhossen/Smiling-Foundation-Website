@@ -1,0 +1,25 @@
+{
+    "projects": [
+        {
+            "id": 1,
+            "title": "Clean Water Initiative",
+            "description": "Providing clean drinking water to rural communities",
+            "image": "water-project.jpg",
+            "status": "ongoing"
+        },
+        {
+            "id": 2,
+            "title": "Education For All",
+            "description": "Supporting underprivileged children's education",
+            "image": "education-project.jpg",
+            "status": "ongoing"
+        },
+        {
+            "id": 3,
+            "title": "Healthcare Access",
+            "description": "Mobile medical camps for remote areas",
+            "image": "healthcare-project.jpg",
+            "status": "completed"
+        }
+    ]
+}
