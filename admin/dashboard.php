@@ -33,7 +33,7 @@ $result = mysqli_query($conn, "SELECT COUNT(*) as count FROM team_members");
 $stats['team_members'] = mysqli_fetch_assoc($result)['count'];
 
 // Get recent projects
-$recent_projects = mysqli_query($conn, "SELECT * FROM projects ORDER BY created_at DESC LIMIT 5");
+$recent_projects = mysqli_query($conn, "SELECT * FROM projects ORDER BY id DESC");
 
 mysqli_close($conn);
 ?>

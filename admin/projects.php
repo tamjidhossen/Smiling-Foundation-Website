@@ -11,7 +11,7 @@ if (!isset($_SESSION['admin_id'])) {
 $conn = mysqli_connect(DB_HOST, DB_USER, DB_PASS, DB_NAME);
 
 // Get all projects
-$query = "SELECT * FROM projects WHERE is_deleted = 0 ORDER BY created_at DESC";
+$query = "SELECT * FROM projects WHERE is_deleted = 0 ORDER BY id DESC";
 $result = mysqli_query($conn, $query);
 $projects = mysqli_fetch_all($result, MYSQLI_ASSOC);
 ?>
