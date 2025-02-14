@@ -5,7 +5,7 @@ require_once '../config/database.php';
 $conn = mysqli_connect(DB_HOST, DB_USER, DB_PASS, DB_NAME);
 
 // Get projects from database
-$query = "SELECT * FROM projects";
+$query = "SELECT * FROM projects ORDER BY id DESC";
 $result = mysqli_query($conn, $query);
 $projects = mysqli_fetch_all($result, MYSQLI_ASSOC);
 ?>
@@ -28,42 +28,47 @@ $projects = mysqli_fetch_all($result, MYSQLI_ASSOC);
         .page-hero { --hero-bg: url('<?php echo $heroImage; ?>'); }
     </style>
     <main>
-    <section class="page-hero">
-        <div class="hero-content fade-in">
-            <h1>Our Projects</h1>
-            <p>Making a difference through sustainable initiatives</p>
-        </div>
-    </section>
+        <section class="page-hero">
+            <div class="hero-content fade-in">
+                <h1>Our Projects</h1>
+                <p>Making a difference through sustainable initiatives</p>
+            </div>
+        </section>
 
-    <section class="projects-grid">
-        <div class="container">
-            <div class="filter-buttons">
-                <button class="filter-btn active" data-filter="all">All</button>
-                <button class="filter-btn" data-filter="ongoing">Ongoing</button>
-                <button class="filter-btn" data-filter="completed">Completed</button>
-            </div>
-            <div class="project-cards">
-                <?php foreach ($projects as $project): ?>
-                    <div class="project-card fade-in" data-status="<?php echo htmlspecialchars($project['status']); ?>">
-                        <div class="project-image">
-                            <img src="../assets/img/projects/<?php echo htmlspecialchars($project['image']); ?>" 
-                                alt="<?php echo htmlspecialchars($project['title']); ?>">
+        <section class="projects-grid">
+            <div class="container">
+                <div class="filter-buttons">
+                    <button class="filter-btn active" data-filter="all">All</button>
+                    <button class="filter-btn" data-filter="ongoing">Ongoing</button>
+                    <button class="filter-btn" data-filter="completed">Completed</button>
+                </div>
+                <div class="project-cards">
+                    <?php foreach ($projects as $project): ?>
+                        <div class="project-card fade-in" data-status="<?php echo htmlspecialchars($project['status']); ?>">
+                            <div class="project-image">
+                                <img src="../assets/img/projects/<?php echo htmlspecialchars($project['image']); ?>" 
+                                    alt="<?php echo htmlspecialchars($project['title']); ?>">
+                            </div>
+                            <div class="project-details">
+                                <h3><?php echo htmlspecialchars($project['title']); ?></h3>
+                                <p class="project-excerpt"><?php echo substr(htmlspecialchars($project['description']), 0, 150) . '...'; ?></p>
+                                <div style="display: flex; justify-content: space-between; align-items: center;">
+                                    <span class="project-status <?php echo $project['status']; ?>">
+                                    <?php echo ucfirst($project['status']); ?>
+                                    </span>
+                                    <a href="project-detail.php?id=<?php echo $project['id']; ?>" class="read-more">
+                                        Learn More <i class="fas fa-arrow-right"></i>
+                                    </a>
+                                </div>
+                            </div>
                         </div>
-                        <div class="project-details">
-                            <h3><?php echo htmlspecialchars($project['title']); ?></h3>
-                            <p><?php echo htmlspecialchars($project['description']); ?></p>
-                            <span class="project-status <?php echo $project['status']; ?>">
-                                <?php echo ucfirst($project['status']); ?>
-                            </span>
-                        </div>
-                    </div>
-                <?php endforeach; ?>
+                    <?php endforeach; ?>
+                </div>
             </div>
-        </div>
-    </section>
-</main>
+        </section>
+    </main>
 
 <?php include '../includes/footer.php'; ?>
 <script src="../assets/js/main.js"></script>
-<script src="../assets/js/projects.js"></script>
+<script src="../assets/js/project.js"></script>
 </body> </html>

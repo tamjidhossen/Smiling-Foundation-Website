@@ -1,4 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
+    // Project filtering
     const filterButtons = document.querySelectorAll('.filter-btn');
     const projectCards = document.querySelectorAll('.project-card');
 
@@ -13,7 +14,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
             projectCards.forEach(card => {
                 if (filterValue === 'all' || card.getAttribute('data-status') === filterValue) {
-                    card.style.display = 'block';
+                    card.style.display = '';
+                    card.style.animation = 'fadeIn 0.5s ease forwards';
                 } else {
                     card.style.display = 'none';
                 }

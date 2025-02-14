@@ -9,8 +9,8 @@ $query = "SELECT * FROM impact_stats";
 $result = mysqli_query($conn, $query);
 $impact_stats = mysqli_fetch_all($result, MYSQLI_ASSOC);
 
-// Get featured projects
-$query = "SELECT * FROM projects WHERE status = 'ongoing' LIMIT 3";
+// Get featured projects (ongoing only, limit 3)
+$query = "SELECT * FROM projects WHERE is_deleted = 0 ORDER BY id DESC LIMIT 3";
 $result = mysqli_query($conn, $query);
 $featured_projects = mysqli_fetch_all($result, MYSQLI_ASSOC);
 
@@ -79,64 +79,36 @@ while ($row = mysqli_fetch_assoc($result)) {
                 </div>
             </div>
         </section>
-        <!-- <section class="impact-section">
-            <div class="container">
-                <div class="impact-grid">
-                    <?php foreach ($impact_stats as $stat): ?>
-                        <div class="impact-card fade-in">
-                            <i class="fas <?php echo htmlspecialchars($stat['icon']); ?>"></i>
-                            <h3><?php echo htmlspecialchars($stat['value']); ?>+</h3>
-                            <p><?php echo htmlspecialchars($stat['title']); ?></p>
-                        </div>
-                    <?php endforeach; ?>
-                </div>
-            </div>
-        </section> -->
 
-        <!-- Featured Projects Section -->
-        <!-- <section class="featured-projects">
-            <div class="container">
-                <h2 class="section-title slide-in">Our Impact Areas</h2>
-                <div class="project-grid">
-                    <?php
-                    $projects = loadJsonData('projects.json')['projects'];
-                    $featured_projects = array_slice($projects, 0, 3); // Show only 3 projects
-                    foreach ($featured_projects as $project): ?>
-                        <div class="project-card fade-in">
-                            <div class="project-image">
-                                <img src="assets/img/projects/<?php echo $project['image']; ?>" 
-                                     alt="<?php echo $project['title']; ?>">
-                            </div>
-                            <div class="project-content">
-                                <h3><?php echo $project['title']; ?></h3>
-                                <p><?php echo $project['description']; ?></p>
-                                <a href="pages/projects.php" class="read-more">Learn More <i class="fas fa-arrow-right"></i></a>
-                            </div>
-                        </div>
-                    <?php endforeach; ?>
-                </div>
-                <div class="text-center">
-                    <a href="pages/projects.php" class="cta-button secondary">View All Projects</a>
-                </div>
-            </div>
-        </section> -->
+        <!-- Our impact areas -->
         <section class="featured-projects">
             <div class="container">
                 <h2 class="section-title slide-in">Our Impact Areas</h2>
                 <div class="project-grid">
-                    <?php foreach ($featured_projects as $project): ?>
-                        <div class="project-card fade-in">
-                            <div class="project-image">
-                                <img src="assets/img/projects/<?php echo htmlspecialchars($project['image']); ?>" 
-                                    alt="<?php echo htmlspecialchars($project['title']); ?>">
-                            </div>
-                            <div class="project-content">
-                                <h3><?php echo htmlspecialchars($project['title']); ?></h3>
-                                <p><?php echo htmlspecialchars($project['description']); ?></p>
-                                <a href="pages/projects.php" class="read-more">Learn More <i class="fas fa-arrow-right"></i></a>
-                            </div>
+                    <?php if (empty($featured_projects)): ?>
+                        <div class="no-projects">
+                            <p>No ongoing projects at the moment.</p>
                         </div>
-                    <?php endforeach; ?>
+                    <?php else: ?>
+                        <?php foreach ($featured_projects as $project): ?>
+                            <div class="project-card fade-in">
+                                <div class="project-image">
+                                    <img src="assets/img/projects/<?php echo htmlspecialchars($project['image']); ?>" 
+                                        alt="<?php echo htmlspecialchars($project['title']); ?>">
+                                </div>
+                                <div class="project-content">
+                                    <h3><?php echo htmlspecialchars($project['title']); ?></h3>
+                                    <p style="display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;"><?php echo htmlspecialchars($project['description']); ?></p>
+                                    <a href="pages/project-detail.php?id=<?php echo $project['id']; ?>" class="read-more">
+                                        Learn More <i class="fas fa-arrow-right"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        <?php endforeach; ?>
+                    <?php endif; ?>
+                </div>
+                <div class="text-center" style="margin-top: 2rem;">
+                    <a href="pages/projects.php" class="cta-button secondary">View All Projects</a>
                 </div>
             </div>
         </section>

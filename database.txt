@@ -118,3 +118,5 @@ ALTER TABLE about_content ADD COLUMN is_deleted BOOLEAN DEFAULT 0;
 
 INSERT INTO about_content (section, title, content) VALUES
 ('mission', 'Our Mission', 'To create positive change through sustainable community development and support.');
+
+ALTER TABLE projects ADD COLUMN is_deleted BOOLEAN DEFAULT 0;
