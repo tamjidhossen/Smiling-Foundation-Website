@@ -1,4 +1,28 @@
-<?php require_once 'config/config.php'; ?>
+<?php
+require_once 'config/config.php';
+require_once 'config/database.php';
+
+$conn = mysqli_connect(DB_HOST, DB_USER, DB_PASS, DB_NAME);
+
+// Get impact stats
+$query = "SELECT * FROM impact_stats";
+$result = mysqli_query($conn, $query);
+$impact_stats = mysqli_fetch_all($result, MYSQLI_ASSOC);
+
+// Get featured projects
+$query = "SELECT * FROM projects WHERE status = 'ongoing' LIMIT 3";
+$result = mysqli_query($conn, $query);
+$featured_projects = mysqli_fetch_all($result, MYSQLI_ASSOC);
+
+// Get mission content
+$query = "SELECT * FROM mission_content";
+$result = mysqli_query($conn, $query);
+$mission_content = array();
+while ($row = mysqli_fetch_assoc($result)) {
+    $mission_content[$row['type']] = $row;
+}
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -55,9 +79,22 @@
                 </div>
             </div>
         </section>
+        <!-- <section class="impact-section">
+            <div class="container">
+                <div class="impact-grid">
+                    <?php foreach ($impact_stats as $stat): ?>
+                        <div class="impact-card fade-in">
+                            <i class="fas <?php echo htmlspecialchars($stat['icon']); ?>"></i>
+                            <h3><?php echo htmlspecialchars($stat['value']); ?>+</h3>
+                            <p><?php echo htmlspecialchars($stat['title']); ?></p>
+                        </div>
+                    <?php endforeach; ?>
+                </div>
+            </div>
+        </section> -->
 
         <!-- Featured Projects Section -->
-        <section class="featured-projects">
+        <!-- <section class="featured-projects">
             <div class="container">
                 <h2 class="section-title slide-in">Our Impact Areas</h2>
                 <div class="project-grid">
@@ -80,6 +117,26 @@
                 </div>
                 <div class="text-center">
                     <a href="pages/projects.php" class="cta-button secondary">View All Projects</a>
+                </div>
+            </div>
+        </section> -->
+        <section class="featured-projects">
+            <div class="container">
+                <h2 class="section-title slide-in">Our Impact Areas</h2>
+                <div class="project-grid">
+                    <?php foreach ($featured_projects as $project): ?>
+                        <div class="project-card fade-in">
+                            <div class="project-image">
+                                <img src="assets/img/projects/<?php echo htmlspecialchars($project['image']); ?>" 
+                                    alt="<?php echo htmlspecialchars($project['title']); ?>">
+                            </div>
+                            <div class="project-content">
+                                <h3><?php echo htmlspecialchars($project['title']); ?></h3>
+                                <p><?php echo htmlspecialchars($project['description']); ?></p>
+                                <a href="pages/projects.php" class="read-more">Learn More <i class="fas fa-arrow-right"></i></a>
+                            </div>
+                        </div>
+                    <?php endforeach; ?>
                 </div>
             </div>
         </section>

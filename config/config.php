@@ -8,6 +8,7 @@ define('CONTACT_ADDRESS', '12/A, Trishal, Mymensingh, Bangladesh');
 define('CURRENCY', 'BDT');
 define('DATE_FORMAT', 'F j, Y');
 define('TIME_ZONE', 'America/New_York');
+define('ADMIN_URL', SITE_URL . '/admin');
 
 // Set default timezone
 date_default_timezone_set(TIME_ZONE);

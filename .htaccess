@@ -1,0 +1,9 @@
+RewriteEngine On
+RewriteBase /smilingfoundation/
+
+# Allow direct access to existing files
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+
+# Redirect admin URLs
+RewriteRule ^admin/(.*)$ admin/$1 [L,QSA]
