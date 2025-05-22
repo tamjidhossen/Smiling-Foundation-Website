@@ -6,8 +6,7 @@ define('CONTACT_EMAIL', 'info@smilingfoundation.org');
 define('CONTACT_PHONE', '+880 1712345678');
 define('CONTACT_ADDRESS', '12/A, Trishal, Mymensingh, Bangladesh');
 define('CURRENCY', 'BDT');
-define('DATE_FORMAT', 'F j, Y');
-define('TIME_ZONE', 'America/New_York');
+define('TIME_ZONE', 'Asia/Dhaka');
 define('ADMIN_URL', SITE_URL . '/admin');
 
 // Set default timezone
