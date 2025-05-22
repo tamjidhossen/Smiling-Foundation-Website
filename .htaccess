@@ -5,5 +5,9 @@ RewriteBase /smilingfoundation/
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
 
+# Handle PHP extension
+RewriteCond %{REQUEST_FILENAME}.php -f
+RewriteRule ^(.*)$ $1.php [L,QSA]
+
 # Redirect admin URLs
 RewriteRule ^admin/(.*)$ admin/$1 [L,QSA]
