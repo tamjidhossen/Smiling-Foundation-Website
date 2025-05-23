@@ -1,0 +1,194 @@
+<?php
+require_once '../config/config.php';
+require_once '../config/database.php';
+
+session_start();
+
+// Check if user is logged in
+if (!isset($_SESSION['admin_id'])) {
+    header('Location: login.php');
+    exit;
+}
+
+
+$conn = get_database_connection();
+
+// Define the three fixed categories
+$fixed_categories = [
+    1 => 'Projects',
+    2 => 'Stories',
+    3 => 'Updates'
+];
+
+// Initialize variables
+$blog = [
+    'id' => '',
+    'title' => '',
+    'content' => '',
+    'author' => '',
+    'category_id' => '',
+    'image' => ''
+];
+$editing = false;
+
+// Check if editing existing blog post
+if (isset($_GET['id']) && is_numeric($_GET['id'])) {
+    $blog_id = $_GET['id'];
+    $editing = true;
+    
+    // Fetch blog post details
+    $query = "SELECT * FROM blogs WHERE id = ?";
+    $stmt = mysqli_prepare($conn, $query);
+    mysqli_stmt_bind_param($stmt, 'i', $blog_id);
+    mysqli_stmt_execute($stmt);
+    $result = mysqli_stmt_get_result($stmt);
+    
+    if ($row = mysqli_fetch_assoc($result)) {
+        $blog = $row;
+        // Debug output
+        error_log("Loading blog ID: {$blog['id']}, Title: {$blog['title']}");
+    } else {
+        // Blog post not found
+        header('Location: blogs.php');
+        exit;
+    }
+}
+
+$pageTitle = $editing ? "Edit Blog Post" : "Create New Blog Post";
+?>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><?php echo $pageTitle; ?> - Admin Panel</title>
+    <link rel="stylesheet" href="../assets/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <!-- Add TinyMCE for rich text editing with API key from environment variable -->
+    <script src="https://cdn.tiny.cloud/1/<?php echo get_env('TINYMCE_API_KEY', 'no-api-key'); ?>/tinymce/5/tinymce.min.js" referrerpolicy="origin"></script>
+    <script>
+        tinymce.init({
+            selector: '#content',
+            height: 400,
+            plugins: 'link image lists table code',
+            toolbar: 'undo redo | styleselect | bold italic | alignleft aligncenter alignright | bullist numlist outdent indent | link image | code',
+            // Update the textareas on submit
+            setup: function(editor) {
+                editor.on('change', function() {
+                    editor.save();
+                });
+            }
+        });
+    </script>
+</head>
+<body class="admin-dashboard">
+    <?php include 'includes/sidebar.php'; ?>
+    
+    <div class="admin-main">
+        <div class="dashboard-header">
+            <h1><?php echo $pageTitle; ?></h1>
+            <p><?php echo $editing ? 'Update the blog post details' : 'Create a new blog post'; ?></p>
+        </div>
+        
+        <?php if (isset($_GET['error'])): ?>
+            <div class="alert error">
+                <?php
+                $error = $_GET['error'];
+                if ($error === 'empty_content') {
+                    echo "Blog content cannot be empty. Please add some content.";
+                } elseif ($error === 'update') {
+                    echo "There was an error updating the blog post. Please try again.";
+                } elseif ($error === 'create') {
+                    echo "There was an error creating the blog post. Please try again.";
+                } elseif ($error === 'filetype') {
+                    echo "Invalid file type. Please upload an image file.";
+                } elseif ($error === 'filesize') {
+                    echo "File size is too large. Maximum allowed size is 2MB.";
+                } elseif ($error === 'upload') {
+                    echo "Error uploading the image file. Please try again.";
+                } else {
+                    echo "An error occurred. Please try again.";
+                }
+                ?>
+            </div>
+        <?php endif; ?>
+        
+        <div class="content-section">
+            <form action="blog_handler.php" method="POST" enctype="multipart/form-data" class="admin-form" onsubmit="return validateForm()">
+                <?php if ($editing): ?>
+                    <input type="hidden" name="id" value="<?php echo $blog['id']; ?>">
+                <?php endif; ?>
+                
+                <div class="form-grid">
+                    <div class="form-group full-width">
+                        <label for="title">Blog Title<span class="required">*</span></label>
+                        <input type="text" id="title" name="title" value="<?php echo htmlspecialchars($blog['title']); ?>" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="category">Category<span class="required">*</span></label>
+                        <select id="category" name="category_id" required>
+                            <option value="">Select Category</option>
+                            <?php foreach ($fixed_categories as $id => $name): ?>
+                                <option value="<?php echo $id; ?>" <?php echo $blog['category_id'] == $id ? 'selected' : ''; ?>>
+                                    <?php echo htmlspecialchars($name); ?>
+                                </option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="author">Author<span class="required">*</span></label>
+                        <input type="text" id="author" name="author" value="<?php echo htmlspecialchars($blog['author']); ?>" required>
+                    </div>
+                    
+                    <div class="form-group full-width">
+                        <label for="content">Blog Content<span class="required">*</span></label>
+                        <textarea id="content" name="content" rows="10" required><?php echo htmlspecialchars($blog['content']); ?></textarea>
+                    </div>
+                    
+                    <div class="form-group full-width">
+                        <label for="image">Blog Image</label>
+                        <?php if (!empty($blog['image'])): ?>
+                            <div style="margin-bottom: 10px;">
+                                <img src="../assets/img/blog/<?php echo htmlspecialchars($blog['image']); ?>" 
+                                     alt="Current image" style="max-width: 200px; max-height: 200px;">
+                                <p>Current image: <?php echo htmlspecialchars($blog['image']); ?></p>
+                            </div>
+                        <?php endif; ?>
+                        <input type="file" id="image" name="image" accept="image/*">
+                        <small>Recommended size: 1200x800 pixels. Max file size: 2MB.</small>
+                    </div>
+                </div>
+                
+                <div style="margin-top: 20px;">
+                    <button type="submit" name="submit" class="cta-button">
+                        <?php echo $editing ? 'Update Blog Post' : 'Create Blog Post'; ?>
+                    </button>
+                    <a href="blogs.php" class="cta-button secondary">Cancel</a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Custom validation function for the form
+        function validateForm() {
+            // Get TinyMCE editor content
+            const editorContent = tinymce.get('content').getContent();
+            
+            // Check if the content is empty (or only contains empty HTML tags)
+            if (!editorContent || editorContent.trim() === '' || editorContent.trim() === '<p></p>') {
+                alert('Blog content cannot be empty. Please add some content.');
+                return false;
+            }
+            
+            // Make sure the content is saved to the textarea
+            tinymce.get('content').save();
+            
+            return true;
+        }
+    </script>
+</body>
+</html>

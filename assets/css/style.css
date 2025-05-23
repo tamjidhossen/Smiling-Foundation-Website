@@ -1276,8 +1276,13 @@ section::before {
   object-fit: cover;
 }
 
+.blog-card-content {
+  padding: 1.5rem;
+}
+
 .blog-content {
   padding: 1.5rem;
+  text-align: justify;
 }
 
 .blog-meta {

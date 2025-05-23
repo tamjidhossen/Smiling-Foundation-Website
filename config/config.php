@@ -1,4 +1,7 @@
 <?php
+// Load environment variables first
+require_once __DIR__ . '/env.php';
+
 // Site configuration
 define('SITE_NAME', 'Smiling Foundation');
 define('SITE_URL', 'http://localhost/smilingfoundation');

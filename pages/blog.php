@@ -1,49 +1,35 @@
 <?php
 require_once '../config/config.php';
-error_log("Looking for file: " . DATA_PATH . '/blog.json');
+require_once '../config/database.php';
+require_once '../includes/functions.php';
 
-// Load blog data from JSON file
-$blogs = loadJsonData('blog.json');
-if (!$blogs) {
-    // Log the error
-    error_log("Failed to load blog data");
-    // Set default values
-    $all_blogs = [];
-    $categories = [];
-} else {
-    $all_blogs = $blogs['blogs'] ?? [];
-    $categories = $blogs['categories'] ?? [];
-}
+$conn = get_database_connection();
 
-// Check if blogs data is loaded correctly
-if (!$blogs || !isset($blogs['categories']) || !isset($blogs['blogs'])) {
-    die("Error: Unable to load blog data");
-}
-
-$all_blogs = $blogs['blogs'];
-$categories = $blogs['categories'];
+// Define the three fixed categories
+$fixed_categories = [
+    1 => 'Projects',
+    2 => 'Stories',
+    3 => 'Updates'
+];
 
 // Simple category filter if category is set in URL
 $category_id = isset($_GET['category']) ? (int)$_GET['category'] : null;
-$tag = isset($_GET['tag']) ? $_GET['tag'] : null;
 
-// Filter blogs based on category or tag
-$filtered_blogs = [];
+// Fetch blog posts based on category filter
 if ($category_id) {
-    $filtered_blogs = array_filter($all_blogs, function($blog) use ($category_id) {
-        return $blog['category_id'] === $category_id;
-    });
-} elseif ($tag) {
-    $filtered_blogs = array_filter($all_blogs, function($blog) use ($tag) {
-        return in_array($tag, $blog['tags']);
-    });
+    $query = "SELECT * FROM blogs WHERE category_id = ? ORDER BY created_at DESC";
+    $stmt = mysqli_prepare($conn, $query);
+    mysqli_stmt_bind_param($stmt, 'i', $category_id);
 } else {
-    $filtered_blogs = $all_blogs;
+    $query = "SELECT * FROM blogs ORDER BY created_at DESC";
+    $stmt = mysqli_prepare($conn, $query);
 }
 
-// Convert filtered_blogs from array with keys to indexed array
-$filtered_blogs = array_values($filtered_blogs);
+mysqli_stmt_execute($stmt);
+$result = mysqli_stmt_get_result($stmt);
+$blogs = mysqli_fetch_all($result, MYSQLI_ASSOC);
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -76,38 +62,38 @@ $filtered_blogs = array_values($filtered_blogs);
                     <a href="blog.php" class="category-link <?php echo !$category_id ? 'active' : ''; ?>">
                         All Posts
                     </a>
-                    <?php foreach ($categories as $cat): ?>
-                        <a href="?category=<?php echo $cat['id']; ?>" 
-                           class="category-link <?php echo $category_id === $cat['id'] ? 'active' : ''; ?>">
-                            <?php echo htmlspecialchars($cat['name']); ?>
+                    <?php foreach ($fixed_categories as $id => $name): ?>
+                        <a href="?category=<?php echo $id; ?>" 
+                           class="category-link <?php echo $category_id === $id ? 'active' : ''; ?>">
+                            <?php echo htmlspecialchars($name); ?>
                         </a>
                     <?php endforeach; ?>
                 </div>
 
                 <!-- Blog Grid -->
                 <div class="blog-grid">
-                    <?php if (empty($filtered_blogs)): ?>
+                    <?php if (empty($blogs)): ?>
                         <div class="no-results">
                             <h3>No blog posts found</h3>
                             <p>Try selecting a different category</p>
                         </div>
                     <?php else: ?>
-                        <?php foreach ($filtered_blogs as $blog): ?>
+                        <?php foreach ($blogs as $blog): ?>
                             <article class="blog-card fade-in">
                                 <div class="blog-image">
                                     <img src="../assets/img/blog/<?php echo htmlspecialchars($blog['image']); ?>" 
                                          alt="<?php echo htmlspecialchars($blog['title']); ?>">
                                 </div>
-                                <div class="blog-content">
+                                <div class="blog-card-content">
                                     <h3><?php echo htmlspecialchars($blog['title']); ?></h3>
                                     <div class="blog-meta">
-                                        <span><i class="far fa-calendar"></i> <?php echo formatDate($blog['date']); ?></span>
+                                        <span><i class="far fa-calendar"></i> <?php echo date('M d, Y', strtotime($blog['created_at'])); ?></span>
                                         <span><i class="far fa-user"></i> <?php echo htmlspecialchars($blog['author']); ?></span>
+                                        <span><i class="far fa-folder"></i> <?php echo htmlspecialchars($fixed_categories[$blog['category_id']] ?? 'Unknown'); ?></span>
                                     </div>
-                                    <p class="blog-excerpt"><?php echo htmlspecialchars($blog['excerpt']); ?></p>
                                     <div class="blog-footer">
                                         <a href="blog-single.php?id=<?php echo $blog['id']; ?>" class="read-more">
-                                            Read More
+                                            Read More <i class="fas fa-arrow-right"></i>
                                         </a>
                                     </div>
                                 </div>
