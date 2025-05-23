@@ -67,7 +67,16 @@ $related_posts = mysqli_fetch_all($related_result, MYSQLI_ASSOC);
                 <div class="blog-content-wrapper">
                     <div class="blog-main-content fade-in">
                         <div class="blog-content">
-                            <?php echo $blog['content']; ?>
+                            <?php
+                            // Check if content contains HTML tags (from previous TinyMCE editor)
+                            if (strip_tags($blog['content']) !== $blog['content']) {
+                                // Content has HTML tags, display it as is
+                                echo $blog['content'];
+                            } else {
+                                // Plain text content, add line breaks
+                                echo nl2br(htmlspecialchars($blog['content']));
+                            }
+                            ?>
                         </div>
 
                         <!-- Social Share Buttons -->

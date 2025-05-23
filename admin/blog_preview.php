@@ -94,7 +94,16 @@ $pageTitle = "Preview: " . $blog['title'];
             
             <div class="blog-content">
                 <div class="blog-full-content">
-                    <?php echo $blog['content']; ?>
+                    <?php
+                    // Check if content contains HTML tags (from previous TinyMCE editor)
+                    if (strip_tags($blog['content']) !== $blog['content']) {
+                        // Content has HTML tags, display it as is
+                        echo $blog['content'];
+                    } else {
+                        // Plain text content, add line breaks
+                        echo nl2br(htmlspecialchars($blog['content']));
+                    }
+                    ?>
                 </div>
             </div>
         </div>

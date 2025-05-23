@@ -65,22 +65,6 @@ $pageTitle = $editing ? "Edit Blog Post" : "Create New Blog Post";
     <title><?php echo $pageTitle; ?> - Admin Panel</title>
     <link rel="stylesheet" href="../assets/css/style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-    <!-- Add TinyMCE for rich text editing with API key from environment variable -->
-    <script src="https://cdn.tiny.cloud/1/<?php echo get_env('TINYMCE_API_KEY', 'no-api-key'); ?>/tinymce/5/tinymce.min.js" referrerpolicy="origin"></script>
-    <script>
-        tinymce.init({
-            selector: '#content',
-            height: 400,
-            plugins: 'link image lists table code',
-            toolbar: 'undo redo | styleselect | bold italic | alignleft aligncenter alignright | bullist numlist outdent indent | link image | code',
-            // Update the textareas on submit
-            setup: function(editor) {
-                editor.on('change', function() {
-                    editor.save();
-                });
-            }
-        });
-    </script>
 </head>
 <body class="admin-dashboard">
     <?php include 'includes/sidebar.php'; ?>
@@ -145,7 +129,8 @@ $pageTitle = $editing ? "Edit Blog Post" : "Create New Blog Post";
                     
                     <div class="form-group full-width">
                         <label for="content">Blog Content<span class="required">*</span></label>
-                        <textarea id="content" name="content" rows="10" required><?php echo htmlspecialchars($blog['content']); ?></textarea>
+                        <textarea id="content" name="content" rows="15" required class="simple-editor"><?php echo htmlspecialchars($blog['content']); ?></textarea>
+                        <small>Enter Blog Content Text.</small>
                     </div>
                     
                     <div class="form-group full-width">
@@ -173,22 +158,30 @@ $pageTitle = $editing ? "Edit Blog Post" : "Create New Blog Post";
     </div>
 
     <script>
-        // Custom validation function for the form
+        // Simple form validation function
         function validateForm() {
-            // Get TinyMCE editor content
-            const editorContent = tinymce.get('content').getContent();
+            const content = document.getElementById('content').value.trim();
             
-            // Check if the content is empty (or only contains empty HTML tags)
-            if (!editorContent || editorContent.trim() === '' || editorContent.trim() === '<p></p>') {
+            // Check if the content is empty
+            if (!content) {
                 alert('Blog content cannot be empty. Please add some content.');
                 return false;
             }
             
-            // Make sure the content is saved to the textarea
-            tinymce.get('content').save();
-            
             return true;
         }
     </script>
+<style>
+.simple-editor {
+    width: 100%;
+    padding: 12px;
+    font-family: Arial, sans-serif;
+    font-size: 14px;
+    line-height: 1.5;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    resize: vertical;
+}
+</style>
 </body>
 </html>
