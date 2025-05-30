@@ -11,12 +11,12 @@ $conn = mysqli_connect(DB_HOST, DB_USER, DB_PASS, DB_NAME);
 
 $action = $_POST['action'] ?? '';
 
-switch ($action) {
-    case 'add':
+switch ($action) {    case 'add':
     case 'edit':
         $title = $_POST['title'];
         $description = $_POST['description'];
         $status = $_POST['status'];
+        $end_date = !empty($_POST['end_date']) ? $_POST['end_date'] : null;
         $project_id = $_POST['project_id'] ?? null;
         
         // Handle image upload
@@ -33,18 +33,18 @@ switch ($action) {
         }
         
         if ($action === 'add') {
-            $query = "INSERT INTO projects (title, description, image, status) VALUES (?, ?, ?, ?)";
+            $query = "INSERT INTO projects (title, description, image, status, end_date) VALUES (?, ?, ?, ?, ?)";
             $stmt = mysqli_prepare($conn, $query);
-            mysqli_stmt_bind_param($stmt, "ssss", $title, $description, $image_name, $status);
+            mysqli_stmt_bind_param($stmt, "sssss", $title, $description, $image_name, $status, $end_date);
         } else {
             if ($image_name) {
-                $query = "UPDATE projects SET title = ?, description = ?, image = ?, status = ? WHERE id = ?";
+                $query = "UPDATE projects SET title = ?, description = ?, image = ?, status = ?, end_date = ? WHERE id = ?";
                 $stmt = mysqli_prepare($conn, $query);
-                mysqli_stmt_bind_param($stmt, "ssssi", $title, $description, $image_name, $status, $project_id);
+                mysqli_stmt_bind_param($stmt, "sssssi", $title, $description, $image_name, $status, $end_date, $project_id);
             } else {
-                $query = "UPDATE projects SET title = ?, description = ?, status = ? WHERE id = ?";
+                $query = "UPDATE projects SET title = ?, description = ?, status = ?, end_date = ? WHERE id = ?";
                 $stmt = mysqli_prepare($conn, $query);
-                mysqli_stmt_bind_param($stmt, "sssi", $title, $description, $status, $project_id);
+                mysqli_stmt_bind_param($stmt, "ssssi", $title, $description, $status, $end_date, $project_id);
             }
         }
         
