@@ -1,4 +1,5 @@
-<?php require_once '../config/config.php'; ?> 
+<?php require_once '../config/config.php'; ?>
+<?php require_once '../config/database.php'; ?> 
 <!DOCTYPE html>
 
 <html lang="en"> <head> <meta charset="UTF-8"> 
@@ -20,31 +21,48 @@
                 <h1>Frequently Asked Questions</h1> 
                 <p>Find answers to common questions about our organization</p> 
             </div> 
-        </section>
-    <section class="faq-section">
+        </section>    <section class="faq-section">
         <div class="container">
             <?php
-            $faqs = loadJsonData('faq.json');
-            if ($faqs && isset($faqs['faq_categories'])) {
-                foreach ($faqs['faq_categories'] as $category): ?>
-                    <div class="faq-category fade-in">
-                        <h2><?php echo htmlspecialchars($category['name']); ?></h2>
-                        <div class="faq-list">
-                            <?php foreach ($category['questions'] as $question): ?>
-                                <div class="faq-item">
-                                    <div class="faq-question">
-                                        <h3><?php echo htmlspecialchars($question['question']); ?></h3>
-                                        <i class="fas fa-chevron-down"></i>
+            $conn = get_database_connection();
+            
+            // Fetch FAQ categories and their questions
+            $categories_query = "SELECT * FROM faq_categories WHERE is_deleted = 0 ORDER BY display_order, name";
+            $categories_result = mysqli_query($conn, $categories_query);
+            
+            if (mysqli_num_rows($categories_result) > 0) {
+                while ($category = mysqli_fetch_assoc($categories_result)): 
+                    // Fetch FAQs for this category
+                    $category_id = $category['id'];
+                    $faqs_query = "SELECT * FROM faqs WHERE category_id = $category_id AND is_deleted = 0 ORDER BY display_order, id";
+                    $faqs_result = mysqli_query($conn, $faqs_query);
+                    
+                    if (mysqli_num_rows($faqs_result) > 0):
+                    ?>
+                        <div class="faq-category fade-in">
+                            <h2><?php echo htmlspecialchars($category['name']); ?></h2>
+                            <div class="faq-list">
+                                <?php while ($faq = mysqli_fetch_assoc($faqs_result)): ?>
+                                    <div class="faq-item">
+                                        <div class="faq-question">
+                                            <h3><?php echo htmlspecialchars($faq['question']); ?></h3>
+                                            <i class="fas fa-chevron-down"></i>
+                                        </div>
+                                        <div class="faq-answer">
+                                            <p><?php echo htmlspecialchars($faq['answer']); ?></p>
+                                        </div>
                                     </div>
-                                    <div class="faq-answer">
-                                        <p><?php echo htmlspecialchars($question['answer']); ?></p>
-                                    </div>
-                                </div>
-                            <?php endforeach; ?>
+                                <?php endwhile; ?>
+                            </div>
                         </div>
-                    </div>
-                <?php endforeach;
-            } ?>
+                    <?php 
+                    endif;
+                endwhile;
+            } else {
+                echo '<p>No FAQs found</p>';
+            }
+            mysqli_close($conn);
+            ?>
         </div>
     </section>
 </main>

@@ -1,4 +1,5 @@
 <?php require_once '../config/config.php'; ?> 
+<?php require_once '../config/database.php'; ?> 
 <!DOCTYPE html>
 
 <html lang="en"> <head> <meta charset="UTF-8"> <meta name="viewport" content="width=device-width, initial-scale=1.0"> <title>Gallery - <?php echo SITE_NAME; ?></title> <link rel="stylesheet" href="../assets/css/style.css"> <link rel="stylesheet" href="../assets/css/animations.css"> <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap" rel="stylesheet"> </head> <body> 
@@ -16,21 +17,24 @@
     </section>
 
     <section class="gallery-section">
-        <div class="container">
-            <div class="gallery-filter">
+        <div class="container">            <div class="gallery-filter">
                 <button class="filter-btn active" data-filter="all">All</button>
                 <button class="filter-btn" data-filter="projects">Projects</button>
+                <button class="filter-btn" data-filter="events">Events</button>
+                <button class="filter-btn" data-filter="general">General</button>
             </div>
             <div class="gallery-grid">
                 <?php
-                $gallery = loadJsonData('gallery.json');
-                if (!$gallery || !isset($gallery['gallery_items'])) {
+                $conn = get_database_connection();
+                $gallery_query = "SELECT * FROM gallery WHERE is_deleted = 0 ORDER BY created_at DESC";
+                $gallery_result = mysqli_query($conn, $gallery_query);
+                
+                if (mysqli_num_rows($gallery_result) == 0) {
                     echo '<p>No gallery items found</p>';
                 } else {
-                    $gallery_items = $gallery['gallery_items'];
-                    foreach ($gallery_items as $item): ?>
+                    while ($item = mysqli_fetch_assoc($gallery_result)): ?>
                         <div class="gallery-item fade-in" data-category="<?php echo htmlspecialchars($item['category']); ?>">
-                            <img src="<?php echo SITE_URL . htmlspecialchars($item['image_url']); ?>" 
+                            <img src="<?php echo SITE_URL; ?>/assets/img/gallery/<?php echo htmlspecialchars($item['image']); ?>" 
                                 alt="<?php echo htmlspecialchars($item['title']); ?>"
                                 onerror="this.src='<?php echo SITE_URL; ?>/assets/img/gallery/default.jpg'">
                             <div class="gallery-overlay">
@@ -38,8 +42,10 @@
                                 <p><?php echo htmlspecialchars($item['description']); ?></p>
                             </div>
                         </div>
-                    <?php endforeach;
-                } ?>
+                    <?php endwhile;
+                }
+                mysqli_close($conn);
+                ?>
             </div>
         </div>
     </section>
