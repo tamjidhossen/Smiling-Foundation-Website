@@ -8,8 +8,8 @@
             <li><a href="<?php echo ADMIN_URL; ?>/dashboard.php" class="<?php echo basename($_SERVER['PHP_SELF']) === 'dashboard.php' ? 'active' : ''; ?>">
                 <i class="fas fa-tachometer-alt"></i> Dashboard
             </a></li>
-            <li><a href="<?php echo ADMIN_URL; ?>/about.php" class="<?php echo basename($_SERVER['PHP_SELF']) === 'about.php' ? 'active' : ''; ?>">
-                <i class="fas fa-info-circle"></i> About Content
+            <li><a href="<?php echo ADMIN_URL; ?>/donations.php" class="<?php echo basename($_SERVER['PHP_SELF']) === 'donations.php' ? 'active' : ''; ?>">
+                <i class="fas fa-hand-holding-heart"></i> Donations
             </a></li>
             <li><a href="<?php echo ADMIN_URL; ?>/projects.php" class="<?php echo basename($_SERVER['PHP_SELF']) === 'projects.php' ? 'active' : ''; ?>">
                 <i class="fas fa-project-diagram"></i> Projects
@@ -18,9 +18,11 @@
                 <i class="fas fa-blog"></i> Blogs
             </a></li>            <li><a href="<?php echo ADMIN_URL; ?>/team.php" class="<?php echo basename($_SERVER['PHP_SELF']) === 'team.php' ? 'active' : ''; ?>">
                 <i class="fas fa-users"></i> Team
-            </a></li>
-            <li><a href="<?php echo ADMIN_URL; ?>/volunteers.php" class="<?php echo basename($_SERVER['PHP_SELF']) === 'volunteers.php' ? 'active' : ''; ?>">
+            </a></li>            <li><a href="<?php echo ADMIN_URL; ?>/volunteers.php" class="<?php echo basename($_SERVER['PHP_SELF']) === 'volunteers.php' ? 'active' : ''; ?>">
                 <i class="fas fa-hands-helping"></i> Volunteers
+            </a></li>
+            <li><a href="<?php echo ADMIN_URL; ?>/about.php" class="<?php echo basename($_SERVER['PHP_SELF']) === 'about.php' ? 'active' : ''; ?>">
+                <i class="fas fa-info-circle"></i> About Content
             </a></li>
             <li><a href="<?php echo ADMIN_URL; ?>/logout.php">
                 <i class="fas fa-sign-out-alt"></i> Logout
