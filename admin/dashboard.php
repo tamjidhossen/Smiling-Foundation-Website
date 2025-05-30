@@ -32,6 +32,13 @@ $stats['blogs'] = mysqli_fetch_assoc($result)['count'];
 $result = mysqli_query($conn, "SELECT COUNT(*) as count FROM team_members");
 $stats['team_members'] = mysqli_fetch_assoc($result)['count'];
 
+// Volunteer stats
+$result = mysqli_query($conn, "SELECT COUNT(*) as count FROM volunteers");
+$stats['volunteers'] = mysqli_fetch_assoc($result)['count'];
+
+$result = mysqli_query($conn, "SELECT COUNT(*) as count FROM volunteers WHERE status = 'pending'");
+$stats['pending_volunteers'] = mysqli_fetch_assoc($result)['count'];
+
 // Get recent projects
 $recent_projects = mysqli_query($conn, "SELECT * FROM projects ORDER BY id DESC");
 
@@ -78,12 +85,25 @@ mysqli_close($conn);
                         <h3>Total Blogs</h3>
                         <p><?php echo $stats['blogs']; ?></p>
                     </div>
-                </div>
-                <div class="stat-card">
+                </div>                <div class="stat-card">
                     <i class="fas fa-users"></i>
                     <div class="stat-content">
                         <h3>Team Members</h3>
                         <p><?php echo $stats['team_members']; ?></p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <i class="fas fa-hands-helping"></i>
+                    <div class="stat-content">
+                        <h3>Total Volunteers</h3>
+                        <p><?php echo $stats['volunteers']; ?></p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <i class="fas fa-clock"></i>
+                    <div class="stat-content">
+                        <h3>Pending Applications</h3>
+                        <p><?php echo $stats['pending_volunteers']; ?></p>
                     </div>
                 </div>
             </div>

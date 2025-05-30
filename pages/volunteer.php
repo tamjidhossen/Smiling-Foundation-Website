@@ -48,7 +48,7 @@
             <div class="volunteer-form slide-in">
                 <h2>Volunteer Registration Form</h2>
                 <p class="form-notice">* Marked fields are mandatory</p>
-                <form id="volunteerForm">
+                <form id="volunteerForm" action="../volunteer_handler.php" method="POST">
                     <!-- Personal Information -->
                     <div class="form-section">
                         <h3>Personal Information</h3>

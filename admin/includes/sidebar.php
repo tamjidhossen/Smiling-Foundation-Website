@@ -16,9 +16,11 @@
             </a></li>
             <li><a href="<?php echo ADMIN_URL; ?>/blogs.php" class="<?php echo basename($_SERVER['PHP_SELF']) === 'blogs.php' ? 'active' : ''; ?>">
                 <i class="fas fa-blog"></i> Blogs
-            </a></li>
-            <li><a href="<?php echo ADMIN_URL; ?>/team.php" class="<?php echo basename($_SERVER['PHP_SELF']) === 'team.php' ? 'active' : ''; ?>">
+            </a></li>            <li><a href="<?php echo ADMIN_URL; ?>/team.php" class="<?php echo basename($_SERVER['PHP_SELF']) === 'team.php' ? 'active' : ''; ?>">
                 <i class="fas fa-users"></i> Team
+            </a></li>
+            <li><a href="<?php echo ADMIN_URL; ?>/volunteers.php" class="<?php echo basename($_SERVER['PHP_SELF']) === 'volunteers.php' ? 'active' : ''; ?>">
+                <i class="fas fa-hands-helping"></i> Volunteers
             </a></li>
             <li><a href="<?php echo ADMIN_URL; ?>/logout.php">
                 <i class="fas fa-sign-out-alt"></i> Logout
