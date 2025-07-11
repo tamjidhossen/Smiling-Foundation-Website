@@ -10,8 +10,6 @@ if (!isset($_SESSION['admin_id'])) {
 }
 
 $conn = get_database_connection();
-$message = '';
-$error = '';
 
 // Handle form submissions
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -19,46 +17,92 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $action = $_POST['action'];
         
         if ($action === 'add') {
-            $title = mysqli_real_escape_string($conn, $_POST['title']);
-            $description = mysqli_real_escape_string($conn, $_POST['description']);
-            $category = mysqli_real_escape_string($conn, $_POST['category']);
-            
-            // Handle image upload
-            $image_name = '';
-            if (isset($_FILES['image']) && $_FILES['image']['error'] === 0) {
-                $upload_dir = '../assets/img/gallery/';
-                $file_extension = pathinfo($_FILES['image']['name'], PATHINFO_EXTENSION);
-                $image_name = uniqid() . '.' . $file_extension;
-                $upload_path = $upload_dir . $image_name;
-                
-                if (move_uploaded_file($_FILES['image']['tmp_name'], $upload_path)) {
-                    $query = "INSERT INTO gallery (title, description, image, category) VALUES ('$title', '$description', '$image_name', '$category')";
-                    if (mysqli_query($conn, $query)) {
-                        $_SESSION['message'] = 'Gallery item added successfully!';
-                        $_SESSION['message_type'] = 'success';
-                    } else {
-                        $_SESSION['message'] = 'Error adding gallery item: ' . mysqli_error($conn);
+            $title = $_POST['title'];
+            $description = $_POST['description'];
+            $category = $_POST['category'];
+            $type = $_POST['type'];
+            $image_name = null;
+            $video_url = null;
+
+            if ($type === 'image') {
+                if (isset($_FILES['image']) && $_FILES['image']['error'] === 0) {
+                    $upload_dir = '../assets/img/gallery/';
+                    $file_extension = pathinfo($_FILES['image']['name'], PATHINFO_EXTENSION);
+                    $image_name = uniqid() . '.' . $file_extension;
+                    $upload_path = $upload_dir . $image_name;
+                    
+                    if (!move_uploaded_file($_FILES['image']['tmp_name'], $upload_path)) {
+                        $_SESSION['message'] = 'Error uploading image.';
                         $_SESSION['message_type'] = 'error';
                     }
                 } else {
-                    $_SESSION['message'] = 'Error uploading image.';
+                    $_SESSION['message'] = 'Please select an image file for type "image".';
                     $_SESSION['message_type'] = 'error';
                 }
-            } else {
-                $_SESSION['message'] = 'Please select an image file.';
-                $_SESSION['message_type'] = 'error';
+            } elseif ($type === 'video') {
+                if (!empty($_POST['video_url'])) {
+                    $video_url = $_POST['video_url'];
+                    // Basic validation for youtube url
+                    if (preg_match('/(youtube\.com|youtu\.be)\/(watch\?v=|embed\/|v\/|)([\w\-]{11})/', $video_url)) {
+                         // The URL is valid
+                    } else {
+                        $_SESSION['message'] = 'Invalid YouTube URL provided.';
+                        $_SESSION['message_type'] = 'error';
+                        $video_url = null; // unset url if invalid
+                    }
+                } else {
+                    $_SESSION['message'] = 'Please provide a video URL for type "video".';
+                    $_SESSION['message_type'] = 'error';
+                }
+            }
+
+            // Proceed only if there are no errors so far
+            if (!isset($_SESSION['message'])) {
+                $query = "INSERT INTO gallery (title, description, category, type, image, video_url) VALUES (?, ?, ?, ?, ?, ?)";
+                $stmt = mysqli_prepare($conn, $query);
+                mysqli_stmt_bind_param($stmt, "ssssss", $title, $description, $category, $type, $image_name, $video_url);
+                
+                if (mysqli_stmt_execute($stmt)) {
+                    $_SESSION['message'] = 'Gallery item added successfully!';
+                    $_SESSION['message_type'] = 'success';
+                } else {
+                    $_SESSION['message'] = 'Error adding gallery item: ' . mysqli_error($conn);
+                    $_SESSION['message_type'] = 'error';
+                }
+                mysqli_stmt_close($stmt);
             }
             
         } elseif ($action === 'delete') {
             $id = (int)$_POST['id'];
-            $query = "UPDATE gallery SET is_deleted = 1 WHERE id = $id";
-            if (mysqli_query($conn, $query)) {
+            
+            // First, get the image filename to delete it from the server
+            $query_select = "SELECT image FROM gallery WHERE id = ?";
+            $stmt_select = mysqli_prepare($conn, $query_select);
+            mysqli_stmt_bind_param($stmt_select, "i", $id);
+            mysqli_stmt_execute($stmt_select);
+            $result = mysqli_stmt_get_result($stmt_select);
+            if ($item = mysqli_fetch_assoc($result)) {
+                if (!empty($item['image'])) {
+                    $image_path = '../assets/img/gallery/' . $item['image'];
+                    if (file_exists($image_path)) {
+                        unlink($image_path); // Delete the file
+                    }
+                }
+            }
+            mysqli_stmt_close($stmt_select);
+
+            // Now, mark the item as deleted in the database
+            $query = "UPDATE gallery SET is_deleted = 1 WHERE id = ?";
+            $stmt = mysqli_prepare($conn, $query);
+            mysqli_stmt_bind_param($stmt, "i", $id);
+            if (mysqli_stmt_execute($stmt)) {
                 $_SESSION['message'] = 'Gallery item deleted successfully!';
                 $_SESSION['message_type'] = 'success';
             } else {
                 $_SESSION['message'] = 'Error deleting gallery item: ' . mysqli_error($conn);
                 $_SESSION['message_type'] = 'error';
             }
+            mysqli_stmt_close($stmt);
         }
         
         // Redirect to prevent resubmission
@@ -141,11 +185,24 @@ $gallery_result = mysqli_query($conn, $gallery_query);
                             <label for="description"><i class="fas fa-align-left"></i> Description:</label>
                             <textarea id="description" name="description" rows="3" placeholder="Enter a brief description"></textarea>
                         </div>
-                        
+
                         <div class="form-group">
+                            <label for="type"><i class="fas fa-photo-video"></i> Media Type:</label>
+                            <select id="type" name="type" required>
+                                <option value="image">Image</option>
+                                <option value="video">YouTube Video</option>
+                            </select>
+                        </div>
+
+                        <div id="image-input-group" class="form-group">
                             <label for="image"><i class="fas fa-image"></i> Image:</label>
-                            <input type="file" id="image" name="image" accept="image/*" required>
+                            <input type="file" id="image" name="image" accept="image/*">
                             <small style="color: #6b7280; font-size: 0.75rem; margin-top: 0.25rem;">Supported formats: JPG, PNG, GIF (Max size: 5MB)</small>
+                        </div>
+
+                        <div id="video-input-group" class="form-group" style="display: none;">
+                            <label for="video_url"><i class="fab fa-youtube"></i> YouTube Video URL:</label>
+                            <input type="text" id="video_url" name="video_url" placeholder="e.g., https://www.youtube.com/watch?v=dQw4w9WgXcQ">
                         </div>
                         
                         <button type="submit" class="btn btn-primary">
@@ -160,9 +217,9 @@ $gallery_result = mysqli_query($conn, $gallery_query);
                         <table class="admin-table">
                             <thead>
                                 <tr>
-                                    <th>Image</th>
+                                    <th>Preview</th>
                                     <th>Title</th>
-                                    <th>Description</th>
+                                    <th>Type</th>
                                     <th>Category</th>
                                     <th>Created</th>
                                     <th>Actions</th>
@@ -172,13 +229,17 @@ $gallery_result = mysqli_query($conn, $gallery_query);
                                 <?php while ($item = mysqli_fetch_assoc($gallery_result)): ?>
                                     <tr>
                                         <td>
-                                            <img src="../assets/img/gallery/<?php echo htmlspecialchars($item['image']); ?>" 
-                                                 alt="<?php echo htmlspecialchars($item['title']); ?>" 
-                                                 class="gallery-image"
-                                                 onerror="this.src='../assets/img/gallery/default.jpg'">
+                                            <?php if ($item['type'] === 'image' && !empty($item['image'])): ?>
+                                                <img src="../assets/img/gallery/<?php echo htmlspecialchars($item['image']); ?>" 
+                                                     alt="<?php echo htmlspecialchars($item['title']); ?>" 
+                                                     class="gallery-image"
+                                                     onerror="this.src='../assets/img/gallery/default.jpg'">
+                                            <?php elseif ($item['type'] === 'video'): ?>
+                                                <div class="video-placeholder"><i class="fab fa-youtube fa-2x" style="color: red;"></i></div>
+                                            <?php endif; ?>
                                         </td>
                                         <td><strong><?php echo htmlspecialchars($item['title']); ?></strong></td>
-                                        <td><?php echo htmlspecialchars(substr($item['description'], 0, 50)) . (strlen($item['description']) > 50 ? '...' : ''); ?></td>
+                                        <td><span class="status-badge status-<?php echo $item['type'] === 'image' ? 'active' : 'paused'; ?>"><?php echo htmlspecialchars(ucfirst($item['type'])); ?></span></td>
                                         <td>
                                             <span class="status-badge status-active">
                                                 <?php echo htmlspecialchars(ucfirst($item['category'])); ?>
@@ -208,18 +269,37 @@ $gallery_result = mysqli_query($conn, $gallery_query);
                         </div>
                     <?php endif; ?>
                 </div>
-            </div>        </main>
+            </div>
+        </main>
     </div>
     
     <script>
         function toggleForm() {
             const form = document.getElementById('addForm');
-            if (form.style.display === 'none' || form.style.display === '') {
-                form.style.display = 'block';
-            } else {
-                form.style.display = 'none';
-            }
+            form.style.display = (form.style.display === 'none' || form.style.display === '') ? 'block' : 'none';
         }
+
+        document.getElementById('type').addEventListener('change', function() {
+            const imageInput = document.getElementById('image-input-group');
+            const videoInput = document.getElementById('video-input-group');
+            const imageField = document.getElementById('image');
+            const videoField = document.getElementById('video_url');
+
+            if (this.value === 'video') {
+                imageInput.style.display = 'none';
+                videoInput.style.display = 'block';
+                imageField.required = false;
+                videoField.required = true;
+            } else {
+                imageInput.style.display = 'block';
+                videoInput.style.display = 'none';
+                imageField.required = true;
+                videoField.required = false;
+            }
+        });
+
+        // Trigger change event on page load to set initial state
+        document.getElementById('type').dispatchEvent(new Event('change'));
     </script>
 </body>
 </html>
