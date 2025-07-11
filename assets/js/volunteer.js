@@ -2,11 +2,84 @@ document.addEventListener("DOMContentLoaded", function () {
   const volunteerForm = document.getElementById("volunteerForm");
 
   if (volunteerForm) {
+    //validations
+    const nameInput = document.getElementById("name");
+    const nidInput = document.getElementById("nid");
+    const addressInput = document.getElementById("present_address");
+    const skillsInput = document.getElementById("special_skills");
+
+    // Name validation
+    nameInput.addEventListener("input", function () {
+      const name = this.value.trim();
+      if (name.length > 0 && name.length < 3) {
+        this.setCustomValidity("Name must be at least 3 characters long.");
+      } else if (/\d/.test(name)) {
+        this.setCustomValidity("Name cannot contain numbers.");
+      } else {
+        this.setCustomValidity("");
+      }
+    });
+
+    // NID validation
+    if (nidInput) {
+      nidInput.addEventListener("input", function () {
+        const nid = this.value.trim();
+        const nidPattern = /^(\d{10}|\d{13}|\d{17})$/;
+        if (nid.length > 0 && !nidPattern.test(nid)) {
+          this.setCustomValidity(
+            "Please enter a valid 10, 13, or 17 digit NID number."
+          );
+        } else {
+          this.setCustomValidity("");
+        }
+      });
+    }
+
+    // Full Address validation
+    if (addressInput) {
+      addressInput.addEventListener("input", function () {
+        if (this.value.length > 255) {
+          this.value = this.value.slice(0, 255);
+        }
+        const address = this.value.trim();
+        if (address.length > 0 && address.length < 10) {
+          this.setCustomValidity(
+            "Full address must be at least 10 characters long."
+          );
+        } else {
+          this.setCustomValidity("");
+        }
+      });
+    }
+    // Special Skills validation (optional field)
+    if (skillsInput) {
+      skillsInput.addEventListener("input", function () {
+        if (this.value.length > 500) {
+          this.value = this.value.slice(0, 500);
+        }
+        const skills = this.value.trim();
+        if (skills.length > 0 && skills.length < 5) {
+          this.setCustomValidity(
+            "Please describe your skills in at least 5 characters."
+          );
+        } else {
+          this.setCustomValidity("");
+        }
+      });
+    }
+    
     volunteerForm.addEventListener("submit", function (e) {
       e.preventDefault();
 
       const submitButton = volunteerForm.querySelector('button[type="submit"]');
       const originalText = submitButton.textContent;
+
+      // Check form validity before submitting
+      if (!volunteerForm.checkValidity()) {
+        // Show validation messages
+        volunteerForm.reportValidity();
+        return;
+      }
 
       // Show loading state
       submitButton.textContent = "Submitting...";

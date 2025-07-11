@@ -39,6 +39,8 @@ if (empty($email) || !filter_var($email, FILTER_VALIDATE_EMAIL)) {
 
 if (empty($nid)) {
     $errors[] = 'NID number is required';
+} elseif (!preg_match('/^(\d{10}|\d{13}|\d{17})$/', $nid)) {
+    $errors[] = 'Please enter a valid 10, 13, or 17 digit NID number.';
 }
 
 if (empty($occupation)) {

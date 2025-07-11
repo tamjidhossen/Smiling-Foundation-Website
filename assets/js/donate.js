@@ -3,6 +3,82 @@ document.addEventListener("DOMContentLoaded", () => {
   const amountButtons = document.querySelectorAll(".amount-btn");
   const customAmountInput = document.getElementById("customAmount");
 
+  const form = document.getElementById("donateForm");
+  const nameInput = document.getElementById("name");
+  const emailInput = document.getElementById("email");
+  const phoneInput = document.getElementById("phone");
+  const messageInput = document.getElementById("message");
+  const amountInput = document.getElementById("customAmount");
+
+  // Name validation
+  nameInput.addEventListener("input", function () {
+    const name = this.value.trim();
+    if (name.length < 2) {
+      this.setCustomValidity("Name must be at least 2 characters");
+    } else if (name.length > 100) {
+      this.setCustomValidity("Name cannot exceed 100 characters");
+    } else {
+      this.setCustomValidity("");
+    }
+  });
+
+  // Message length validation
+  messageInput.addEventListener("input", function () {
+    if (this.value.length > 500) {
+      this.setCustomValidity("Message cannot exceed 500 characters");
+    } else {
+      this.setCustomValidity("");
+    }
+  });
+
+  // Amount validation
+  amountInput.addEventListener("input", function () {
+    const amount = parseFloat(this.value);
+    if (amount < 1) {
+      this.setCustomValidity("Minimum donation amount is ৳1");
+    } else if (amount > 1000000) {
+      this.setCustomValidity("Maximum donation amount is ৳1,000,000");
+    } else {
+      this.setCustomValidity("");
+    }
+  });
+
+  // Form submission validation
+  form.addEventListener("submit", function (e) {
+    const amount = parseFloat(amountInput.value);
+    const name = nameInput.value.trim();
+    const phone = phoneInput.value.trim();
+    const message = messageInput.value.trim();
+
+    let errors = [];
+
+    // Amount validation
+    if (!amount || amount < 1) {
+      errors.push("Please enter a valid donation amount");
+    }
+    if (amount > 1000000) {
+      errors.push("Maximum donation amount is ৳1,000,000");
+    }
+
+    // Name validation
+    if (name.length < 2) {
+      errors.push("Name must be at least 2 characters");
+    }
+    if (name.length > 100) {
+      errors.push("Name cannot exceed 100 characters");
+    }
+
+    // Message validation
+    if (message.length > 500) {
+      errors.push("Message cannot exceed 500 characters");
+    }
+
+    if (errors.length > 0) {
+      e.preventDefault();
+      alert("Please fix the following errors:\n" + errors.join("\n"));
+    }
+  });
+
   // Handle amount button clicks
   amountButtons.forEach((button) => {
     button.addEventListener("click", () => {
