@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: May 30, 2025 at 02:05 PM
+-- Generation Time: Jul 11, 2025 at 03:36 PM
 -- Server version: 10.4.28-MariaDB
 -- PHP Version: 8.2.4
 
@@ -50,7 +50,16 @@ INSERT INTO `about_content` (`id`, `title`, `content`, `section`, `created_at`, 
 (7, 'Our Mission', 'To create positive change through sustainable community development and support', 'mission', '2025-02-14 02:14:41', 0),
 (8, 'Our Values', '[{\"title\":\"Integrity\",\"description\":\"We maintain highest ethical standards in all our actions\"},{\"title\":\"Compassion\",\"description\":\"We serve with empathy and understanding\"},{\"title\":\"Sustainability\",\"description\":\"We create lasting positive impact\"}]', 'values', '2025-02-14 02:21:29', 0),
 (9, 'Our Values', '[{\"title\":\"Integrity\",\"description\":\"We maintain highest ethical standards in all our actions\"},{\"title\":\"Compassion\",\"description\":\"We serve with empathy and understanding\"},{\"title\":\"Sustainability\",\"description\":\"We create lasting positive impact\"}]', 'values', '2025-02-14 02:22:06', 0),
-(10, 'Our Values', '[{\"title\":\"Integrity\",\"description\":\"We maintain highest ethical standards in all our actions\"},{\"title\":\"Compassion\",\"description\":\"We serve with empathy and understanding\"},{\"title\":\"Sustainability\",\"description\":\"We create lasting positive impact\"}]', 'values', '2025-05-22 11:45:14', 0);
+(10, 'Our Values', '[{\"title\":\"Integrity\",\"description\":\"We maintain highest ethical standards in all our actions\"},{\"title\":\"Compassion\",\"description\":\"We serve with empathy and understanding\"},{\"title\":\"Sustainability\",\"description\":\"We create lasting positive impact\"}]', 'values', '2025-05-22 11:45:14', 0),
+(11, 'Who We Are', 'The As-Sunnah Foundation is a non-political, non-profitable government-registered organization dedicated to education, da\'wah and full human welfare. It was established in 2017 by Shaikh Ahmadullah. He is the chairman of the organization and manages it directly. As-Sunnah Foundation was registered in 2019 from Joint Stock, Whose registration number is S-13111/2019. Since then, it has been working rigorously to serve the humanity, reform the society, developing the utmost morality, arrange various activities to build up a neat and clean mentality and ultimately to build up an ideal society following in the footsteps of the Prophet Muhammad, the teacher of humanity, the messenger of human liberation and peace and the ideal of human welfare. One of the goals of As-Sunnah Foundation is to build life and society based on the Quran and Sunnah and to propagate and spread authentic knowledge. It is our policy to adopt a moderate approach based on the Qur\'an and Sunnah following the path of the righteous predecessors.', 'who_we_are', '2025-07-11 13:22:03', 0),
+(12, 'Our Goals & Objectivesxx', '[{\"title\":\"goal number one\",\"description\":\"(a) Institutional and sub-institutional Islamic and general education and career-oriented technical training initiatives across the country, especially in the comparatively neglected sections of society\"}]', 'goals', '2025-07-11 13:22:53', 0),
+(13, 'Our Goals & Objectives', '[{\"title\":\"goal number one\",\"description\":\"(a) Institutional and sub-institutional Islamic and general education and career-oriented technical training initiatives across the country, especially in the comparatively neglected sections of society\"},{\"title\":\"Goal number two\",\"description\":\"(a) Institutional and sub-institutional Islamic and general education and career-oriented technical training initiatives across the country, especially in the comparatively neglected sections of society(a) Institutional and sub-institutional Islamic and general education and career-oriented technical training initiatives across the country, especially in the comparatively neglected sections of society(a) Institutional and sub-institutional Islamic and general education and career-oriented technical training initiatives across the country, especially in the comparatively neglected sections of society(a) Institutional and sub-institutional Islamic and general education and career-oriented technical training initiatives across the country, especially in the comparatively neglected sections of society\"}]', 'goals', '2025-07-11 13:23:25', 0),
+(14, 'Our Goals & Objectives', '[{\"title\":\"goal number one\",\"description\":\"(a) Institutional and sub-institutional Islamic and general education and career-oriented technical training initiatives across the country, especially in the comparatively neglected sections of society\"},{\"title\":\"Goal number two\",\"description\":\"(a) Institutional and sub-institutional Islamic and general education and career-oriented technical training initiatives across the country, especially in the comparatively neglected sections of society(a) Institutional and sub-institutional Islamic and general education and career-oriented technical training initiatives across the country, especially in the comparatively neglected sections of society(a) Institutional and sub-institutional Islamic and general education and career-oriented technical training initiatives across the country, especially in the comparatively neglected sections of society(a) Institutional and sub-institutional Islamic and general education and career-oriented technical training initiatives across the country, especially in the comparatively neglected sections of society\"},{\"title\":\"goal 3\",\"description\":\"(a) Institutional and sub-institutional Islamic and general education and career-oriented technical training initiatives across the country, especially in the comparatively neglected sections of society(a) Institutional and sub-institutional Islamic and general education and career-oriented technical training initiatives across the country, especially in the comparatively neglected sections of society\"}]', 'goals', '2025-07-11 13:23:49', 0),
+(15, 'Our Activities', '(a) Institutional and sub-institutional Islamic and general education and career-oriented technical training initiatives across the country, especially in the comparatively neglected sections of society(a) Institutional and sub-institutional Islamic and general education and career-oriented technical training initiatives across the country, especially in the comparatively neglected sections of society(a) Institutional and sub-institutional Islamic and general education and career-oriented technical training initiatives across the country, especially in the comparatively neglected sections of society(a) Institutional and sub-institutional Islamic and general education and career-oriented technical training initiatives across the country, especially in the comparatively neglected sections of society', 'activities', '2025-07-11 13:24:20', 0),
+(16, 'Who We Are', 'The Smiling Foundation is a non-profit organization dedicated to fostering well-being and creating positive change in communities. We believe in the transformative power of a smile – not just as an expression of joy, but as a catalyst for connection, resilience, and hope. Our team is comprised of passionate individuals, volunteers, and partners working collaboratively to make a tangible difference in the lives of those we serve. We strive to be a beacon of optimism, empowering individuals and strengthening the fabric of society through our diverse initiatives.', 'who_we_are', '2025-07-11 13:25:46', 0),
+(17, 'Our Goals & Objectives', '[{\"title\":\"Fostering Sustainable Community Empowerment\",\"description\":\"The Smiling Foundation aims to empower underserved communities by creating lasting positive change. Our primary goal is to enhance the health, well-being, and economic self-sufficiency of individuals and families in disadvantaged areas. We believe that by focusing on core pillars like health, education, and skill development, we can build resilient communities that can thrive independently. This involves not just providing immediate relief but also investing in long-term solutions that address systemic challenges. We envision a future where every smile reflects genuine well-being and hope, cultivated through accessible resources and supportive environments. Our efforts are dedicated to building a stronger, more equitable society where opportunities for growth and happiness are available to all, ensuring that our impact extends far beyond temporary fixes and creates a ripple effect of positive transformation for generations to come.\"},{\"title\":\"Cultivating Holistic Well-being for a Brighter Future\",\"description\":\"The Smiling Foundation is committed to cultivating holistic well-being within underserved communities, ensuring a brighter and more sustainable future for everyone. Our overarching goal is to empower individuals and families by providing comprehensive support in health, education, and economic stability. We believe that genuine well-being isn\'t just about addressing immediate needs; it\'s about fostering an environment where individuals can thrive physically, intellectually, and financially. By integrating these key areas, we aim to break cycles of poverty and disadvantage, replacing them with opportunities for growth and self-sufficiency. We\'re dedicated to building strong, resilient communities where every person has the chance to realize their full potential and contribute meaningfully. Ultimately, we envision a world where smiles are a true reflection of health, hope, and an equitable future for all.\"}]', 'goals', '2025-07-11 13:27:33', 0),
+(18, 'Our Activities', 'Our Community Health & Wellness Camps are a cornerstone of The Smiling Foundation\'s efforts to enhance the well-being of underserved populations. These regularly organized camps provide free basic medical check-ups, dental screenings, eye examinations, and vaccinations, addressing immediate health concerns that often go unattended in resource-limited areas. Beyond direct medical services, we also conduct health awareness sessions focusing on preventative care, hygiene practices, nutrition, and common disease prevention. Held in accessible community locations, these camps aim to bridge the gap in healthcare access, identify early health issues, and empower individuals with the knowledge to manage their health effectively. We collaborate with local medical professionals and volunteers to ensure the quality and reach of these vital services, promoting a healthier and happier community for all.', 'activities', '2025-07-11 13:28:21', 0),
+(19, 'Our Values', '[{\"title\":\"Integrity\",\"description\":\"We maintain highest ethical standards in all our actions\"},{\"title\":\"Compassion\",\"description\":\"We serve with empathy, love, passio,n and understanding\"},{\"title\":\"Sustainability\",\"description\":\"We create a long-lasting positive impact on our communities\"}]', 'values', '2025-07-11 13:34:10', 0);
 
 -- --------------------------------------------------------
 
@@ -154,7 +163,10 @@ INSERT INTO `donations` (`id`, `donor_name`, `email`, `phone`, `amount_usd`, `am
 (1, 'Test Donor', 'test@example.com', '01234567890', 41.84, 5000.00, 'Education', 0, 'Test donation message', 'TXN_1748584022_8602', 'completed', NULL, 1, '2025-05-30 05:47:02', '2025-05-30 05:47:02', '2025-05-30 05:47:02'),
 (2, 'Test User', 'test@example.com', '01234567890', 16.74, 2000.00, 'Education', 0, 'Test donation', 'TXN_1748584321_8545', 'completed', NULL, 1, '2025-05-30 05:52:01', '2025-05-30 05:52:01', '2025-05-30 05:52:01'),
 (3, 'Tamjid Hossen', 'tamjidhossen420@gmail.com', '01759023201', 8.36, 999.00, 'Medicine', 0, '', 'TXN_1748584818_2727', 'completed', NULL, 1, '2025-05-30 06:00:18', '2025-05-30 06:00:18', '2025-05-30 06:00:18'),
-(4, 'Tamjid Hossen', 'tamjidhossen420@gmail.com', '01759023201', 0.07, 8.00, 'Clean Water', 1, 'hwllo wofjaso', 'TXN_1748585366_2909', 'completed', NULL, 1, '2025-05-30 06:09:26', '2025-05-30 06:09:26', '2025-05-30 06:09:26');
+(4, 'Tamjid Hossen', 'tamjidhossen420@gmail.com', '01759023201', 0.07, 8.00, 'Clean Water', 1, 'hwllo wofjaso', 'TXN_1748585366_2909', 'completed', NULL, 1, '2025-05-30 06:09:26', '2025-05-30 06:09:26', '2025-05-30 06:09:26'),
+(5, 'Ishrak Ramen', 'ishrak@gmail.com', '01759023201', 103.77, 12400.00, 'Food Security', 0, '', 'TXN_1752234207_8286', 'completed', NULL, 1, '2025-07-11 11:43:27', '2025-07-11 11:43:27', '2025-07-11 11:43:27'),
+(6, 'Tamjid Hossen', 'tamjidhossen420@gmail.com', '01759023201', 14225.93, 1699999.00, 'Medicine', 1, '', 'TXN_1752234308_2748', 'completed', NULL, 1, '2025-07-11 11:45:08', '2025-07-11 11:45:08', '2025-07-11 11:45:08'),
+(7, 'ক্স', 'tamjidhossen420@gmail.com', '01759023201', 836.81, 99999.00, 'Flood Relief', 0, '', 'TXN_1752235036_8307', 'completed', NULL, 1, '2025-07-11 11:57:16', '2025-07-11 11:57:16', '2025-07-11 11:57:16');
 
 -- --------------------------------------------------------
 
@@ -246,22 +258,28 @@ CREATE TABLE `gallery` (
   `id` int(11) NOT NULL,
   `title` varchar(255) NOT NULL,
   `description` text DEFAULT NULL,
-  `image` varchar(255) NOT NULL,
+  `image` varchar(255) DEFAULT NULL,
   `category` varchar(50) NOT NULL DEFAULT 'general',
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
-  `is_deleted` tinyint(1) DEFAULT 0
+  `is_deleted` tinyint(1) DEFAULT 0,
+  `type` varchar(10) NOT NULL DEFAULT 'image' COMMENT 'Type of media: image or video',
+  `video_url` varchar(255) DEFAULT NULL COMMENT 'URL for the youtube video'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `gallery`
 --
 
-INSERT INTO `gallery` (`id`, `title`, `description`, `image`, `category`, `created_at`, `is_deleted`) VALUES
-(1, 'Annual Charity Gala 2024', 'Highlights from our annual fundraising gala', 'gala-2024-thumb.jpg', 'events', '2025-05-30 06:36:23', 0),
-(2, 'Clean Water Project', 'Installing water pumps in rural communities', 'water-project-thumb.jpg', 'projects', '2025-05-30 06:36:23', 0),
-(3, 'Community Health Camp', 'Free health checkups for the community', 'health-camp-thumb.jpg', 'events', '2025-05-30 06:36:23', 0),
-(4, 'Slum Business visits', 'We visited a slum', '6839554259f0f.jpg', 'general', '2025-05-30 06:50:42', 0),
-(5, 'Hello world', 'This is hello world', '683993f74b94f.jpg', 'general', '2025-05-30 11:18:15', 0);
+INSERT INTO `gallery` (`id`, `title`, `description`, `image`, `category`, `created_at`, `is_deleted`, `type`, `video_url`) VALUES
+(1, 'Annual Charity Gala 2024', 'Highlights from our annual fundraising gala', 'gala-2024-thumb.jpg', 'events', '2025-05-30 06:36:23', 0, 'image', NULL),
+(2, 'Clean Water Project', 'Installing water pumps in rural communities', 'water-project-thumb.jpg', 'projects', '2025-05-30 06:36:23', 0, 'image', NULL),
+(3, 'Community Health Camp', 'Free health checkups for the community', 'health-camp-thumb.jpg', 'events', '2025-05-30 06:36:23', 0, 'image', NULL),
+(4, 'Slum Business visits', 'We visited a slum', '6839554259f0f.jpg', 'general', '2025-05-30 06:50:42', 0, 'image', NULL),
+(5, 'Hello world', 'This is hello world', '683993f74b94f.jpg', 'general', '2025-05-30 11:18:15', 0, 'image', NULL),
+(6, 'Hello demo', 'asdfasd', '687108c926186.jpg', 'general', '2025-07-11 12:51:21', 1, 'image', NULL),
+(7, 'hello', 'blah blah blah', NULL, 'projects', '2025-07-11 12:56:23', 1, 'video', 'https://youtu.be/wI2FB9cZV5I'),
+(8, 'asdfasd', 'asdf', '68710a1a88e42.jpg', 'events', '2025-07-11 12:56:58', 1, 'image', NULL),
+(9, 'As sunnah', 'hello', NULL, 'general', '2025-07-11 12:58:04', 0, 'video', 'https://youtu.be/wI2FB9cZV5I');
 
 -- --------------------------------------------------------
 
@@ -318,7 +336,7 @@ INSERT INTO `projects` (`id`, `title`, `description`, `image`, `status`, `create
 (5, 'Education For All', 'At the Smiling Foundation, we are committed to creating a brighter future for all children in Bangladesh. Our \"Education For All\" project was a testament to this commitment, aiming to provide quality education to underprivileged and marginalized children across the country.\r\n\r\nProject Overview\r\n\r\nLaunched in [Year], the \"Education For All\" initiative sought to bridge the educational gap for children who lacked access to formal schooling due to socio-economic challenges. We focused on:\r\n\r\nInclusive Education: Ensuring that children from diverse backgrounds, including those with disabilities, had equal access to learning opportunities.\r\nCommunity Engagement: Collaborating with local communities to raise awareness about the importance of education and to encourage enrollment.\r\nCapacity Building: Training teachers to handle diverse classrooms and to implement inclusive teaching methodologies.\r\nKey Achievements\r\n\r\nThroughout the project\'s duration, we accomplished several milestones:\r\n\r\nEnrollment Drive: Successfully enrolled [Number] children into primary education programs in [Regions/Districts].\r\nTeacher Training: Conducted workshops for [Number] teachers, enhancing their skills in inclusive education practices.\r\nCommunity Workshops: Organized [Number] community sessions to sensitize parents and guardians about the value of education.\r\nChallenges and Solutions\r\n\r\nWhile implementing the project, we encountered challenges such as:\r\n\r\nCultural Barriers: In some communities, traditional beliefs hindered children\'s education, especially for girls and children with disabilities. We addressed this by engaging local leaders and conducting awareness campaigns to shift perceptions.\r\nResource Limitations: Limited access to educational materials was a significant hurdle. We partnered with organizations to source and distribute necessary supplies to the schools involved.\r\nImpact and Legacy\r\n\r\nThe \"Education For All\" project has left a lasting impact:\r\n\r\nImproved Literacy Rates: There was a noticeable increase in literacy rates among the participating communities.\r\nSustainable Practices: The training provided to teachers and the awareness raised in communities have fostered a culture that values education, ensuring the project\'s benefits continue beyond its completion.\r\nConclusion\r\n\r\nThe success of the \"Education For All\" project underscores the importance of inclusive and accessible education. At the Smiling Foundation, we are proud of the strides we\'ve made and remain dedicated to empowering every child through learning opportunities.', '67aed2dce61fc.jpg', 'completed', '2025-02-14 05:21:32', 0, NULL),
 (6, 'Clean Water Initiative', 'At the Smiling Foundation, we are dedicated to improving the lives of communities across Bangladesh. One of our key ongoing projects is the Clean Water Initiative, which aims to provide sustainable access to safe and clean drinking water for underserved populations.\r\n\r\nProject Overview\r\n\r\nAccess to clean water is a fundamental human right and essential for maintaining health and well-being. In many parts of Bangladesh, families struggle with contaminated water sources, leading to serious health issues, particularly among children. Our Clean Water Initiative focuses on addressing this critical need by implementing comprehensive solutions that ensure long-term water security for vulnerable communities.\r\n\r\nObjectives\r\n\r\nImprove Health Outcomes: By providing access to clean water, we aim to reduce the prevalence of waterborne diseases, thereby improving overall community health.\r\n\r\nEmpower Communities: We engage local communities in the planning and implementation of water projects to foster ownership and ensure sustainability.\r\n\r\nPromote Hygiene Practices: Alongside providing clean water, we conduct educational programs to raise awareness about proper hygiene and sanitation practices.\r\n\r\nKey Activities\r\n\r\nCommunity Engagement: We work closely with community members to assess their specific needs and involve them in decision-making processes.\r\n\r\nInfrastructure Development: Our team constructs wells, installs water purification systems, and develops distribution networks to ensure reliable access to clean water.\r\n\r\nEducation and Training: We organize workshops and distribute materials to educate communities on the importance of clean water and hygiene practices.\r\n\r\nImpact\r\n\r\nSince the inception of the Clean Water Initiative, we have witnessed significant positive changes in the communities we serve:\r\n\r\nHealth Improvements: There has been a notable decrease in waterborne illnesses, leading to healthier families and reduced healthcare costs.\r\n\r\nEconomic Benefits: With better health, community members can engage more effectively in economic activities, contributing to improved livelihoods.\r\n\r\nSustainable Development: The initiative has empowered communities to manage and maintain their water resources, ensuring long-term sustainability.\r\n\r\nLooking Ahead\r\n\r\nWe are committed to expanding the Clean Water Initiative to reach more communities in need. Future plans include exploring innovative water purification technologies, strengthening partnerships with local organizations, and enhancing our educational programs to promote lasting behavioral change.\r\n\r\nGet Involved\r\n\r\nYour support is crucial to the success of the Clean Water Initiative. Whether through donations, volunteering, or spreading the word, you can make a significant impact. Together, we can ensure that every person in Bangladesh has access to the clean water they deserve.\r\n\r\nFor more information on how to get involved, please contact us directly.', '67aed243318ee.jpg', 'ongoing', '2025-02-14 05:18:59', 0, NULL),
 (12, 'All the good foods', 'This is just a food event', '68399e55576e8.jpg', 'completed', '2025-05-30 12:02:29', 0, '2025-05-30'),
-(13, 'Another Food Project', 'Food is Goood', '68399e9e0310c.jpeg', 'ongoing', '2025-05-30 12:03:42', 0, '2025-06-07');
+(13, 'Another Food Project', 'Food is Goood', '68399e9e0310c.jpeg', 'completed', '2025-05-30 12:03:42', 0, '2025-06-07');
 
 -- --------------------------------------------------------
 
@@ -487,7 +505,7 @@ ALTER TABLE `volunteers`
 -- AUTO_INCREMENT for table `about_content`
 --
 ALTER TABLE `about_content`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
 
 --
 -- AUTO_INCREMENT for table `admins`
@@ -511,7 +529,7 @@ ALTER TABLE `categories`
 -- AUTO_INCREMENT for table `donations`
 --
 ALTER TABLE `donations`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT for table `donation_purposes`
@@ -535,7 +553,7 @@ ALTER TABLE `faq_categories`
 -- AUTO_INCREMENT for table `gallery`
 --
 ALTER TABLE `gallery`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- AUTO_INCREMENT for table `impact_stats`
@@ -553,7 +571,7 @@ ALTER TABLE `mission_content`
 -- AUTO_INCREMENT for table `projects`
 --
 ALTER TABLE `projects`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
 
 --
 -- AUTO_INCREMENT for table `team_members`
@@ -565,7 +583,7 @@ ALTER TABLE `team_members`
 -- AUTO_INCREMENT for table `volunteers`
 --
 ALTER TABLE `volunteers`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- Constraints for dumped tables

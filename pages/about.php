@@ -117,6 +117,21 @@ mysqli_close($conn);
             color: var(--primary-color);
             margin-bottom: 1rem;
         }
+        /* --- Block Text Styles --- */
+        .content-section p {
+            background-color: #ffffff; /* White background for the block */
+            border: 1px solid #e0e0e0; /* Light border */
+            padding: 1.5rem; /* Padding inside the block */
+            margin-bottom: 1rem; /* Space between blocks if multiple paragraphs */
+            border-radius: 8px; /* Slightly rounded corners */
+            line-height: 1.6; /* Improve readability */
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05); /* Subtle shadow */
+            text-align: justify; /* Justify text for a cleaner block look */
+        }
+        /* If you have multiple paragraphs that should appear as distinct blocks */
+        .content-section p + p {
+            margin-top: 1rem; /* Add more space between consecutive paragraphs if needed */
+        }
     </style>
 </head>
 <body>
