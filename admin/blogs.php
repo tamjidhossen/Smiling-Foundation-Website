@@ -17,7 +17,7 @@ $conn = get_database_connection();
 $fixed_categories = [
     1 => 'Projects',
     2 => 'Stories',
-    3 => 'Updates'
+    3 => 'News'
 ];
 
 // Handle delete blog post
@@ -36,6 +36,37 @@ if (isset($_GET['delete']) && is_numeric($_GET['delete'])) {
     }
 }
 
+// Handle delete news
+if (isset($_GET['delete_news']) && is_numeric($_GET['delete_news'])) {
+    $news_id = $_GET['delete_news'];
+    
+    // Get the thumbnail to delete file
+    $get_query = "SELECT thumbnail FROM news WHERE id = ?";
+    $stmt = mysqli_prepare($conn, $get_query);
+    mysqli_stmt_bind_param($stmt, 'i', $news_id);
+    mysqli_stmt_execute($stmt);
+    $result = mysqli_stmt_get_result($stmt);
+    $news = mysqli_fetch_assoc($result);
+    
+    // Delete the news
+    $delete_query = "DELETE FROM news WHERE id = ?";
+    $stmt = mysqli_prepare($conn, $delete_query);
+    mysqli_stmt_bind_param($stmt, 'i', $news_id);
+    
+    if (mysqli_stmt_execute($stmt)) {
+        // Delete thumbnail file if exists
+        if ($news && $news['thumbnail']) {
+            $file_path = '../assets/img/blog/' . $news['thumbnail'];
+            if (file_exists($file_path)) {
+                unlink($file_path);
+            }
+        }
+        $success_message = "News deleted successfully!";
+    } else {
+        $error_message = "Error deleting news: " . mysqli_error($conn);
+    }
+}
+
 // Success message for update
 if (isset($_GET['success'])) {
     if ($_GET['success'] == 'updated') {
@@ -51,10 +82,13 @@ if (isset($_GET['success'])) {
     }
 }
 
-// Fetch all blog posts (with no caching)
-$query = "SELECT * FROM blogs ORDER BY created_at DESC";
+// Fetch all blog posts and news
+$query = "SELECT id, title, NULL as author, 3 as category_id, thumbnail as image, created_at, 'news' as type FROM news
+          UNION ALL
+          SELECT id, title, author, category_id, image, created_at, 'blog' as type FROM blogs 
+          ORDER BY created_at DESC";
 $result = mysqli_query($conn, $query);
-$blogs = mysqli_fetch_all($result, MYSQLI_ASSOC);
+$all_posts = mysqli_fetch_all($result, MYSQLI_ASSOC);
 
 $pageTitle = "Blog Management";
 ?>
@@ -113,28 +147,35 @@ $pageTitle = "Blog Management";
                         </tr>
                     </thead>
                     <tbody>
-                        <?php if (empty($blogs)): ?>
+                        <?php if (empty($all_posts)): ?>
                             <tr>
                                 <td colspan="6" style="text-align: center;">No blog posts found. <a href="blog_form.php">Create your first blog post</a></td>
                             </tr>
                         <?php else: ?>
-                            <?php foreach ($blogs as $blog): ?>
-                                <tr class="blog-item" data-category="<?php echo $blog['category_id']; ?>">
+                            <?php foreach ($all_posts as $post): ?>
+                                <tr class="blog-item" data-category="<?php echo $post['category_id']; ?>">
                                     <td>
-                                        <?php if (!empty($blog['image'])): ?>
-                                            <img src="../assets/img/blog/<?php echo htmlspecialchars($blog['image']); ?>" alt="<?php echo htmlspecialchars($blog['title']); ?>" class="table-image">
+                                        <?php if (!empty($post['image'])): ?>
+                                            <img src="../assets/img/blog/<?php echo htmlspecialchars($post['image']); ?>" alt="<?php echo htmlspecialchars($post['title']); ?>" class="table-image">
                                         <?php else: ?>
                                             <div class="no-image">No Image</div>
                                         <?php endif; ?>
                                     </td>
-                                    <td><?php echo htmlspecialchars($blog['title']); ?></td>
-                                    <td><?php echo htmlspecialchars($fixed_categories[$blog['category_id']] ?? 'Unknown'); ?></td>
-                                    <td><?php echo htmlspecialchars($blog['author']); ?></td>
-                                    <td><?php echo date('M d, Y', strtotime($blog['created_at'])); ?></td>
                                     <td>
-                                        <a href="blog_form.php?id=<?php echo $blog['id']; ?>" class="action-btn edit"><i class="fas fa-edit"></i></a>
-                                        <a href="blog_preview.php?id=<?php echo $blog['id']; ?>" class="action-btn" title="Preview"><i class="fas fa-eye"></i></a>
-                                        <a href="javascript:void(0)" onclick="confirmDelete(<?php echo $blog['id']; ?>)" class="action-btn delete"><i class="fas fa-trash"></i></a>
+                                        <?php echo htmlspecialchars($post['title']); ?>
+                                        <?php if ($post['type'] === 'news'): ?>
+                                            <span class="news-badge-small"><i class="fas fa-external-link-alt"></i></span>
+                                        <?php endif; ?>
+                                    </td>
+                                    <td><?php echo htmlspecialchars($fixed_categories[$post['category_id']] ?? 'Unknown'); ?></td>
+                                    <td><?php echo $post['type'] === 'news' ? 'External News' : htmlspecialchars($post['author']); ?></td>
+                                    <td><?php echo date('M d, Y', strtotime($post['created_at'])); ?></td>
+                                    <td>
+                                        <a href="blog_form.php?id=<?php echo $post['id']; ?>&type=<?php echo $post['type']; ?>" class="action-btn edit"><i class="fas fa-edit"></i></a>
+                                        <?php if ($post['type'] === 'blog'): ?>
+                                            <a href="blog_preview.php?id=<?php echo $post['id']; ?>" class="action-btn" title="Preview"><i class="fas fa-eye"></i></a>
+                                        <?php endif; ?>
+                                        <a href="javascript:void(0)" onclick="confirmDelete(<?php echo $post['id']; ?>, '<?php echo $post['type']; ?>')" class="action-btn delete"><i class="fas fa-trash"></i></a>
                                     </td>
                                 </tr>
                             <?php endforeach; ?>
@@ -146,9 +187,16 @@ $pageTitle = "Blog Management";
     </div>
     
     <script>
-        function confirmDelete(id) {
-            if (confirm('Are you sure you want to delete this blog post? This action cannot be undone.')) {
-                window.location.href = 'blogs.php?delete=' + id;
+        function confirmDelete(id, type) {
+            const itemType = type === 'news' ? 'news item' : 'blog post';
+            if (confirm(`Are you sure you want to delete this ${itemType}? This action cannot be undone.`)) {
+                if (type === 'news') {
+                    // For news, we need to delete from news table
+                    window.location.href = 'blogs.php?delete_news=' + id;
+                } else {
+                    // For blogs, delete from blogs table
+                    window.location.href = 'blogs.php?delete=' + id;
+                }
             }
         }
         
@@ -163,5 +211,18 @@ $pageTitle = "Blog Management";
             });
         }
     </script>
+    
+    <style>
+        .news-badge-small {
+            display: inline-block;
+            background: var(--primary-color, #2d336b);
+            color: white;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-size: 10px;
+            margin-left: 8px;
+            vertical-align: middle;
+        }
+    </style>
 </body>
 </html>

@@ -17,7 +17,7 @@ $conn = get_database_connection();
 $fixed_categories = [
     1 => 'Projects',
     2 => 'Stories',
-    3 => 'Updates'
+    3 => 'News'
 ];
 
 // Initialize variables
@@ -27,30 +27,55 @@ $blog = [
     'content' => '',
     'author' => '',
     'category_id' => '',
-    'image' => ''
+    'image' => '',
+    'external_url' => ''
 ];
 $editing = false;
 
-// Check if editing existing blog post
+// Check if editing existing blog post or news
 if (isset($_GET['id']) && is_numeric($_GET['id'])) {
-    $blog_id = $_GET['id'];
+    $item_id = $_GET['id'];
+    $item_type = $_GET['type'] ?? 'blog';
     $editing = true;
     
-    // Fetch blog post details
-    $query = "SELECT * FROM blogs WHERE id = ?";
-    $stmt = mysqli_prepare($conn, $query);
-    mysqli_stmt_bind_param($stmt, 'i', $blog_id);
-    mysqli_stmt_execute($stmt);
-    $result = mysqli_stmt_get_result($stmt);
-    
-    if ($row = mysqli_fetch_assoc($result)) {
-        $blog = $row;
-        // Debug output
-        error_log("Loading blog ID: {$blog['id']}, Title: {$blog['title']}");
+    if ($item_type === 'news') {
+        // Fetch news details
+        $query = "SELECT id, title, thumbnail as image, external_url FROM news WHERE id = ?";
+        $stmt = mysqli_prepare($conn, $query);
+        mysqli_stmt_bind_param($stmt, 'i', $item_id);
+        mysqli_stmt_execute($stmt);
+        $result = mysqli_stmt_get_result($stmt);
+        
+        if ($row = mysqli_fetch_assoc($result)) {
+            $blog = [
+                'id' => $row['id'],
+                'title' => $row['title'],
+                'content' => '',
+                'author' => '',
+                'category_id' => 3, // News category
+                'image' => $row['image'],
+                'external_url' => $row['external_url']
+            ];
+        } else {
+            header('Location: blogs.php');
+            exit;
+        }
     } else {
-        // Blog post not found
-        header('Location: blogs.php');
-        exit;
+        // Fetch blog post details
+        $query = "SELECT * FROM blogs WHERE id = ?";
+        $stmt = mysqli_prepare($conn, $query);
+        mysqli_stmt_bind_param($stmt, 'i', $item_id);
+        mysqli_stmt_execute($stmt);
+        $result = mysqli_stmt_get_result($stmt);
+        
+        if ($row = mysqli_fetch_assoc($result)) {
+            $blog = $row;
+            $blog['external_url'] = '';
+        } else {
+            // Blog post not found
+            header('Location: blogs.php');
+            exit;
+        }
     }
 }
 
@@ -88,7 +113,7 @@ $pageTitle = $editing ? "Edit Blog Post" : "Create New Blog Post";
                 } elseif ($error === 'filetype') {
                     echo "Invalid file type. Please upload an image file.";
                 } elseif ($error === 'filesize') {
-                    echo "File size is too large. Maximum allowed size is 2MB.";
+                    echo "File size is too large. Maximum allowed size is 10MB.";
                 } elseif ($error === 'upload') {
                     echo "Error uploading the image file. Please try again.";
                 } else {
@@ -112,7 +137,7 @@ $pageTitle = $editing ? "Edit Blog Post" : "Create New Blog Post";
                     
                     <div class="form-group">
                         <label for="category">Category<span class="required">*</span></label>
-                        <select id="category" name="category_id" required>
+                        <select id="category" name="category_id" required onchange="toggleNewsFields()">
                             <option value="">Select Category</option>
                             <?php foreach ($fixed_categories as $id => $name): ?>
                                 <option value="<?php echo $id; ?>" <?php echo $blog['category_id'] == $id ? 'selected' : ''; ?>>
@@ -122,12 +147,19 @@ $pageTitle = $editing ? "Edit Blog Post" : "Create New Blog Post";
                         </select>
                     </div>
                     
-                    <div class="form-group">
+                    <!-- News-specific field -->
+                    <div class="form-group" id="external_url_group" style="display: none;">
+                        <label for="external_url">External News URL<span class="required">*</span></label>
+                        <input type="url" id="external_url" name="external_url" value="<?php echo htmlspecialchars($blog['external_url']); ?>" placeholder="https://example.com/news-article">
+                        <small>Full URL to the external news article</small>
+                    </div>
+                    
+                    <div class="form-group" id="author_group">
                         <label for="author">Author<span class="required">*</span></label>
                         <input type="text" id="author" name="author" value="<?php echo htmlspecialchars($blog['author']); ?>" required>
                     </div>
                     
-                    <div class="form-group full-width">
+                    <div class="form-group full-width" id="content_group">
                         <label for="content">Blog Content<span class="required">*</span></label>
                         <textarea id="content" name="content" rows="15" required class="simple-editor"><?php echo htmlspecialchars($blog['content']); ?></textarea>
                         <small>Enter Blog Content Text.</small>
@@ -143,7 +175,7 @@ $pageTitle = $editing ? "Edit Blog Post" : "Create New Blog Post";
                             </div>
                         <?php endif; ?>
                         <input type="file" id="image" name="image" accept="image/*">
-                        <small>Recommended size: 1200x800 pixels. Max file size: 2MB.</small>
+                        <small>Recommended size: 1200x800 pixels. Max file size: 10MB.</small>
                     </div>
                 </div>
                 
@@ -161,15 +193,45 @@ $pageTitle = $editing ? "Edit Blog Post" : "Create New Blog Post";
         // Simple form validation function
         function validateForm() {
             const content = document.getElementById('content').value.trim();
+            const categoryId = document.getElementById('category').value;
+            const externalUrl = document.getElementById('external_url').value.trim();
             
-            // Check if the content is empty
-            if (!content) {
-                alert('Blog content cannot be empty. Please add some content.');
-                return false;
+            // For news category, check external URL instead of content
+            if (categoryId === '3') {
+                if (!externalUrl) {
+                    alert('External News URL is required for news posts.');
+                    return false;
+                }
+            } else {
+                // Check if the content is empty for regular blog posts
+                if (!content) {
+                    alert('Blog content cannot be empty. Please add some content.');
+                    return false;
+                }
             }
             
             return true;
         }
+        
+        function toggleNewsFields() {
+            const categoryId = document.getElementById('category').value;
+            const isNews = categoryId === '3';
+            
+            // Toggle visibility of fields
+            document.getElementById('external_url_group').style.display = isNews ? 'block' : 'none';
+            document.getElementById('author_group').style.display = isNews ? 'none' : 'block';
+            document.getElementById('content_group').style.display = isNews ? 'none' : 'block';
+            
+            // Toggle required attributes
+            document.getElementById('external_url').required = isNews;
+            document.getElementById('author').required = !isNews;
+            document.getElementById('content').required = !isNews;
+        }
+        
+        // Initialize form state on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            toggleNewsFields();
+        });
     </script>
 <style>
 .simple-editor {

@@ -22,7 +22,7 @@ define('UPLOADS_PATH', ROOT_PATH . '/assets/img/uploads');
 define('DATA_PATH', ROOT_PATH . '/data');
 
 // File upload settings
-define('MAX_FILE_SIZE', 5 * 1024 * 1024); // 5MB
+define('MAX_FILE_SIZE', 10 * 1024 * 1024); // 10MB
 define('ALLOWED_FILE_TYPES', ['jpg', 'jpeg', 'png', 'gif']);
 
 // Social Media Links

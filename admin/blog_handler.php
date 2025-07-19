@@ -17,9 +17,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Get form data
     $id = isset($_POST['id']) ? $_POST['id'] : null;
     $title = $_POST['title'];
-    $content = $_POST['content'];
-    $author = $_POST['author'];
     $category_id = $_POST['category_id'];
+    
+    // Handle news vs blog content
+    if ($category_id == 3) { // News category
+        $external_url = $_POST['external_url'];
+        $content = '';
+        $author = '';
+    } else { // Regular blog
+        $content = $_POST['content'];
+        $author = $_POST['author'];
+        $external_url = '';
+    }
     
     // Handle image upload
     $image_name = null;
@@ -27,7 +36,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $image_name = handle_image_upload();
     } elseif ($id) {
         // If editing and no new image uploaded, keep existing image
-        $query = "SELECT image FROM blogs WHERE id = ?";
+        $query = $category_id == 3 ? "SELECT thumbnail as image FROM news WHERE id = ?" : "SELECT image FROM blogs WHERE id = ?";
         $stmt = mysqli_prepare($conn, $query);
         mysqli_stmt_bind_param($stmt, 'i', $id);
         mysqli_stmt_execute($stmt);
@@ -38,9 +47,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     
     // If editing existing post
     if ($id) {
-        $query = "UPDATE blogs SET title = ?, content = ?, author = ?, category_id = ?, image = ? WHERE id = ?";
-        $stmt = mysqli_prepare($conn, $query);
-        mysqli_stmt_bind_param($stmt, 'sssssi', $title, $content, $author, $category_id, $image_name, $id);
+        if ($category_id == 3) { // Update news
+            $query = "UPDATE news SET title = ?, thumbnail = ?, external_url = ? WHERE id = ?";
+            $stmt = mysqli_prepare($conn, $query);
+            mysqli_stmt_bind_param($stmt, 'sssi', $title, $image_name, $external_url, $id);
+        } else { // Update blog
+            $query = "UPDATE blogs SET title = ?, content = ?, author = ?, category_id = ?, image = ? WHERE id = ?";
+            $stmt = mysqli_prepare($conn, $query);
+            mysqli_stmt_bind_param($stmt, 'sssssi', $title, $content, $author, $category_id, $image_name, $id);
+        }
         
         if (mysqli_stmt_execute($stmt)) {
             // Redirect back to blog management
@@ -52,9 +67,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     } else {
         // Creating new post
-        $query = "INSERT INTO blogs (title, content, author, category_id, image, created_at) VALUES (?, ?, ?, ?, ?, NOW())";
-        $stmt = mysqli_prepare($conn, $query);
-        mysqli_stmt_bind_param($stmt, 'sssss', $title, $content, $author, $category_id, $image_name);
+        if ($category_id == 3) { // Create news
+            $query = "INSERT INTO news (title, thumbnail, external_url) VALUES (?, ?, ?)";
+            $stmt = mysqli_prepare($conn, $query);
+            mysqli_stmt_bind_param($stmt, 'sss', $title, $image_name, $external_url);
+        } else { // Create blog
+            $query = "INSERT INTO blogs (title, content, author, category_id, image, created_at) VALUES (?, ?, ?, ?, ?, NOW())";
+            $stmt = mysqli_prepare($conn, $query);
+            mysqli_stmt_bind_param($stmt, 'sssss', $title, $content, $author, $category_id, $image_name);
+        }
         
         if (mysqli_stmt_execute($stmt)) {
             // Redirect back to blog management
@@ -80,8 +101,8 @@ function handle_image_upload() {
     $filename = uniqid() . '.' . pathinfo($_FILES['image']['name'], PATHINFO_EXTENSION);
     $target_file = $upload_dir . $filename;
     
-    // Check file size (2MB max)
-    if ($_FILES['image']['size'] > 2 * 1024 * 1024) {
+    // Check file size (10MB max)
+    if ($_FILES['image']['size'] > 10 * 1024 * 1024) {
         header('Location: blog_form.php?error=filesize');
         exit;
     }
