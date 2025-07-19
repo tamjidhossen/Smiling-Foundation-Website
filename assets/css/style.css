@@ -1421,6 +1421,37 @@ section::before {
   line-height: 1.6;
   margin-bottom: 1.5rem;
   opacity: 0.9;
+  text-align: justify;
+}
+
+.bio-container {
+  margin-bottom: 1.5rem;
+}
+
+.read-more-btn {
+  background: transparent;
+  border: 2px solid var(--primary-color);
+  color: var(--primary-color);
+  padding: 0.5rem 1rem;
+  border-radius: 25px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  margin-top: 0.5rem;
+  display: inline-block;
+}
+
+.read-more-btn:hover {
+  background: var(--primary-color);
+  color: var(--white);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.read-more-btn.expanded {
+  background: var(--primary-color);
+  color: var(--white);
 }
 
 .social-links {

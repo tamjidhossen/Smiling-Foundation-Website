@@ -84,7 +84,20 @@ mysqli_close($conn);
                                 <h3><?php echo htmlspecialchars($member['name']); ?></h3>
                                 <p class="position"><?php echo htmlspecialchars($member['position']); ?></p>
                                 <?php if ($member['bio']): ?>
-                                    <p class="bio"><?php echo htmlspecialchars($member['bio']); ?></p>
+                                    <?php 
+                                    $bio = htmlspecialchars($member['bio']);
+                                    $bioLength = strlen($bio);
+                                    $truncateLength = 150; // Character limit before showing "read more"
+                                    ?>
+                                    <div class="bio-container">
+                                        <?php if ($bioLength > $truncateLength): ?>
+                                            <p class="bio bio-short"><?php echo substr($bio, 0, $truncateLength) . '...'; ?></p>
+                                            <p class="bio bio-full" style="display: none;"><?php echo $bio; ?></p>
+                                            <button class="read-more-btn" onclick="toggleBio(this)">Read More</button>
+                                        <?php else: ?>
+                                            <p class="bio"><?php echo $bio; ?></p>
+                                        <?php endif; ?>
+                                    </div>
                                 <?php endif; ?>
                                 <div class="social-links">
                                     <?php if ($member['linkedin']): ?>
@@ -122,7 +135,20 @@ mysqli_close($conn);
                                 <h3><?php echo htmlspecialchars($member['name']); ?></h3>
                                 <p class="position"><?php echo htmlspecialchars($member['position']); ?></p>
                                 <?php if ($member['bio']): ?>
-                                    <p class="bio"><?php echo htmlspecialchars($member['bio']); ?></p>
+                                    <?php 
+                                    $bio = htmlspecialchars($member['bio']);
+                                    $bioLength = strlen($bio);
+                                    $truncateLength = 150; // Character limit before showing "read more"
+                                    ?>
+                                    <div class="bio-container">
+                                        <?php if ($bioLength > $truncateLength): ?>
+                                            <p class="bio bio-short"><?php echo substr($bio, 0, $truncateLength) . '...'; ?></p>
+                                            <p class="bio bio-full" style="display: none;"><?php echo $bio; ?></p>
+                                            <button class="read-more-btn" onclick="toggleBio(this)">Read More</button>
+                                        <?php else: ?>
+                                            <p class="bio"><?php echo $bio; ?></p>
+                                        <?php endif; ?>
+                                    </div>
                                 <?php endif; ?>
                                 <div class="social-links">
                                     <?php if ($member['linkedin']): ?>
@@ -146,5 +172,6 @@ mysqli_close($conn);
 
 <?php include '../includes/footer.php'; ?>
 <script src="../assets/js/main.js"></script>
+<script src="../assets/js/team.js"></script>
 </body> 
 </html>
