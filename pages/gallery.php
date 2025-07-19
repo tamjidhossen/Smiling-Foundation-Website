@@ -26,9 +26,8 @@ function get_youtube_embed_url($url) {
     <section class="gallery-section">
         <div class="container">            <div class="gallery-filter">
                 <button class="filter-btn active" data-filter="all">All</button>
-                <button class="filter-btn" data-filter="projects">Projects</button>
-                <button class="filter-btn" data-filter="events">Events</button>
-                <button class="filter-btn" data-filter="general">General</button>
+                <button class="filter-btn" data-filter="image">Images</button>
+                <button class="filter-btn" data-filter="video">Videos</button>
             </div>
             <div class="gallery-grid">
                 <?php
@@ -40,7 +39,7 @@ function get_youtube_embed_url($url) {
                     echo '<p>No gallery items found</p>';
                 } else {
                     while ($item = mysqli_fetch_assoc($gallery_result)): ?>
-                        <div class="gallery-item fade-in" data-category="<?php echo htmlspecialchars($item['category']); ?>">
+                        <div class="gallery-item fade-in" data-type="<?php echo htmlspecialchars($item['type']); ?>">
                             <?php if ($item['type'] === 'image' && !empty($item['image'])): ?>
                                 <img src="<?php echo SITE_URL; ?>/assets/img/gallery/<?php echo htmlspecialchars($item['image']); ?>" 
                                     alt="<?php echo htmlspecialchars($item['title']); ?>"
