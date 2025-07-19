@@ -1564,7 +1564,8 @@ section::before {
 /* Blog Single Page Styles */
 .blog-hero {
   height: 60vh;
-  background-size: cover;
+  /* background-size: cover; */
+  background-repeat: no-repeat;
   background-position: center;
   position: relative;
   color: var(--white);
@@ -1581,7 +1582,7 @@ section::before {
   left: 0;
   right: 0;
   bottom: 0;
-  background: linear-gradient(transparent, rgba(0, 0, 0, 0.8));
+  /* background: linear-gradient(transparent, rgba(0, 0, 0, 0.8)); */
 }
 
 .blog-hero .container {
