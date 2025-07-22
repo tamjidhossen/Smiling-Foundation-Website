@@ -31,6 +31,8 @@ if (empty($name)) {
 
 if (empty($phone)) {
     $errors[] = 'Phone number is required';
+} elseif (!preg_match('/^01[3-9]\d{8}$/', $phone)) {
+    $errors[] = 'Please enter a valid Bangladeshi mobile number (11 digits starting with 01)';
 }
 
 if (empty($email) || !filter_var($email, FILTER_VALIDATE_EMAIL)) {

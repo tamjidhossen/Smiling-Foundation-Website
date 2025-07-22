@@ -42,6 +42,11 @@ if (empty($email) || !filter_var($email, FILTER_VALIDATE_EMAIL)) {
     $errors[] = 'Valid email is required';
 }
 
+// Validate phone number if provided (optional field)
+if (!empty($phone) && !preg_match('/^01[3-9]\d{8}$/', $phone)) {
+    $errors[] = 'Please enter a valid Bangladeshi mobile number (11 digits starting with 01)';
+}
+
 // Return validation errors if any
 if (!empty($errors)) {
     echo json_encode(['success' => false, 'message' => implode(', ', $errors)]);

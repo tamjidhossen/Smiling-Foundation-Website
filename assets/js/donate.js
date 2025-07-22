@@ -31,6 +31,20 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
+  // Phone validation (optional field)
+  phoneInput.addEventListener("input", function () {
+    const phone = this.value.replace(/\D/g, ''); // Remove non-digits
+    const phonePattern = /^01[3-9]\d{8}$/;
+    
+    if (phone.length > 0 && !phonePattern.test(phone)) {
+      this.setCustomValidity(
+        "Please enter a valid Bangladeshi mobile number (11 digits starting with 01)"
+      );
+    } else {
+      this.setCustomValidity("");
+    }
+  });
+
   // Amount validation
   amountInput.addEventListener("input", function () {
     const amount = parseFloat(this.value);

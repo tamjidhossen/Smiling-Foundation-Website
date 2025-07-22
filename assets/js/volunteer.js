@@ -4,6 +4,7 @@ document.addEventListener("DOMContentLoaded", function () {
   if (volunteerForm) {
     //validations
     const nameInput = document.getElementById("name");
+    const phoneInput = document.getElementById("phone");
     const nidInput = document.getElementById("nid");
     const addressInput = document.getElementById("present_address");
     const skillsInput = document.getElementById("special_skills");
@@ -19,6 +20,23 @@ document.addEventListener("DOMContentLoaded", function () {
         this.setCustomValidity("");
       }
     });
+
+    // Phone validation
+    if (phoneInput) {
+      phoneInput.addEventListener("input", function () {
+        // Remove any non-digit characters for validation
+        const phone = this.value.replace(/\D/g, '');
+        const phonePattern = /^01[3-9]\d{8}$/;
+        
+        if (phone.length > 0 && !phonePattern.test(phone)) {
+          this.setCustomValidity(
+            "Please enter a valid Bangladeshi mobile number (11 digits starting with 01)"
+          );
+        } else {
+          this.setCustomValidity("");
+        }
+      });
+    }
 
     // NID validation
     if (nidInput) {

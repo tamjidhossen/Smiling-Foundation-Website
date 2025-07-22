@@ -59,7 +59,8 @@
                             </div>
                             <div class="form-group">
                                 <label for="phone">Phone Number *</label>
-                                <input type="tel" id="phone" name="phone" required>
+                                <input type="tel" id="phone" name="phone" required placeholder="01XXXXXXXXX" maxlength="11" pattern="01[3-9][0-9]{8}">
+                                <small class="form-hint">Enter your Bangladeshi mobile number (11 digits, e.g., 01712345678)</small>
                             </div>
                             <div class="form-group">
                                 <label for="email">Email *</label>
