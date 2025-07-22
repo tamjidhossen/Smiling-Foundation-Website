@@ -51,22 +51,20 @@ $related_posts = mysqli_fetch_all($related_result, MYSQLI_ASSOC);
     <?php include '../includes/header.php'; ?>
 
     <main>
-        <article class="blog-single">
-            <div class="blog-hero" style="background-image: url('../assets/img/blog/<?php echo htmlspecialchars($blog['image']); ?>')">
-                <div class="container">
-                    <h1 class="fade-in"><?php echo htmlspecialchars($blog['title']); ?></h1>
-                    <div class="blog-meta">
-                        <span><i class="far fa-calendar"></i> <?php echo date('M d, Y', strtotime($blog['created_at'])); ?></span>
-                        <span><i class="far fa-user"></i> <?php echo htmlspecialchars($blog['author']); ?></span>
-                        <span><i class="far fa-folder"></i> <?php echo htmlspecialchars($fixed_categories[$blog['category_id']] ?? 'Unknown'); ?></span>
-                    </div>
-                </div>
-            </div>
-
+        <section class="blog-detail-section">
             <div class="container">
-                <div class="blog-content-wrapper">
-                    <div class="blog-main-content fade-in">
-                        <div class="blog-content">
+                <div class="blog-detail-content">
+                    <img src="../assets/img/blog/<?php echo htmlspecialchars($blog['image']); ?>" 
+                         alt="<?php echo htmlspecialchars($blog['title']); ?>"
+                         class="blog-detail-image fade-in">
+                    <div class="blog-detail-info">
+                        <h1 class="slide-in"><?php echo htmlspecialchars($blog['title']); ?></h1>
+                        <div class="blog-meta">
+                            <span><i class="far fa-calendar"></i> <?php echo date('M d, Y', strtotime($blog['created_at'])); ?></span>
+                            <span><i class="far fa-user"></i> <?php echo htmlspecialchars($blog['author']); ?></span>
+                            <span class="blog-category"><?php echo htmlspecialchars($fixed_categories[$blog['category_id']] ?? 'Unknown'); ?></span>
+                        </div>
+                        <div class="blog-description fade-in">
                             <?php
                             // Check if content contains HTML tags (from previous TinyMCE editor)
                             if (strip_tags($blog['content']) !== $blog['content']) {
@@ -95,7 +93,7 @@ $related_posts = mysqli_fetch_all($related_result, MYSQLI_ASSOC);
                     </div>
                 </div>
             </div>
-        </article>
+        </section>
     </main>
 
     <?php include '../includes/footer.php'; ?>
