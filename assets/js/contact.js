@@ -1,24 +1,40 @@
-document.addEventListener('DOMContentLoaded', () => {
-    const contactForm = document.getElementById('contactForm');
+document.addEventListener("DOMContentLoaded", () => {
+  const contactForm = document.getElementById("contactForm");
 
-    contactForm.addEventListener('submit', async (e) => {
-        e.preventDefault();
+  contactForm.addEventListener("submit", async (e) => {
+    e.preventDefault();
 
-        // Get form data
-        const formData = new FormData(contactForm);
-        const formDataObject = {};
-        formData.forEach((value, key) => {
-            formDataObject[key] = value;
-        });
+    // Show loading state
+    const submitBtn = contactForm.querySelector('button[type="submit"]');
+    const originalText = submitBtn.textContent;
+    submitBtn.textContent = "Sending...";
+    submitBtn.disabled = true;
 
-        try {
-            // In a real implementation, you would send this to a server
-            // For demo purposes, just show success message
-            console.log('Form data:', formDataObject);
-            alert('Thank you for your message! We will get back to you soon.');
-            contactForm.reset();
-        } catch (error) {
-            alert('There was an error sending your message. Please try again.');
-        }
-    });
+    try {
+      // Get form data
+      const formData = new FormData(contactForm);
+
+      // Send to server
+      const response = await fetch("../contact_handler.php", {
+        method: "POST",
+        body: formData,
+      });
+
+      const result = await response.json();
+
+      if (result.success) {
+        alert(result.message);
+        contactForm.reset();
+      } else {
+        alert(result.message);
+      }
+    } catch (error) {
+      console.error("Error:", error);
+      alert("There was an error sending your message. Please try again.");
+    } finally {
+      // Reset button state
+      submitBtn.textContent = originalText;
+      submitBtn.disabled = false;
+    }
+  });
 });

@@ -25,9 +25,9 @@ document.addEventListener("DOMContentLoaded", function () {
     if (phoneInput) {
       phoneInput.addEventListener("input", function () {
         // Remove any non-digit characters for validation
-        const phone = this.value.replace(/\D/g, '');
+        const phone = this.value.replace(/\D/g, "");
         const phonePattern = /^01[3-9]\d{8}$/;
-        
+
         if (phone.length > 0 && !phonePattern.test(phone)) {
           this.setCustomValidity(
             "Please enter a valid Bangladeshi mobile number (11 digits starting with 01)"
@@ -85,7 +85,7 @@ document.addEventListener("DOMContentLoaded", function () {
         }
       });
     }
-    
+
     volunteerForm.addEventListener("submit", function (e) {
       e.preventDefault();
 

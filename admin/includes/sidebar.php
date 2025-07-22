@@ -20,6 +20,8 @@
                 <i class="fas fa-users"></i> Team
             </a></li>            <li><a href="<?php echo ADMIN_URL; ?>/volunteers.php" class="<?php echo basename($_SERVER['PHP_SELF']) === 'volunteers.php' ? 'active' : ''; ?>">
                 <i class="fas fa-hands-helping"></i> Volunteers
+            </a></li>            <li><a href="<?php echo ADMIN_URL; ?>/contacts.php" class="<?php echo basename($_SERVER['PHP_SELF']) === 'contacts.php' ? 'active' : ''; ?>">
+                <i class="fas fa-envelope"></i> Contact Messages
             </a></li>            <li><a href="<?php echo ADMIN_URL; ?>/gallery.php" class="<?php echo basename($_SERVER['PHP_SELF']) === 'gallery.php' ? 'active' : ''; ?>">
                 <i class="fas fa-images"></i> Gallery
             </a></li>
