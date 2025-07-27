@@ -89,9 +89,40 @@ if (mysqli_stmt_execute($stmt)) {
     mysqli_stmt_execute($update_stmt);
     mysqli_stmt_close($update_stmt);
     
+    // Send donation invoice email
+    try {
+        require_once 'config/email_config.php';
+        require_once 'includes/SMTPEmailHandler.php';
+        
+        // Prepare donation data for email
+        $donation_data = [
+            'id' => $donation_id,
+            'transaction_id' => $transaction_id,
+            'donor_name' => $name,
+            'email' => $email,
+            'phone' => $phone,
+            'amount_usd' => $amount_usd,
+            'amount_bdt' => $amount_bdt,
+            'purpose' => $purpose,
+            'created_at' => date('Y-m-d H:i:s')
+        ];
+        
+        $emailHandler = new EmailHandler();
+        $email_sent = $emailHandler->sendDonationInvoice($donation_data);
+        
+        if ($email_sent) {
+            error_log("Donation invoice email sent successfully to: $email");
+        } else {
+            error_log("Failed to send donation invoice email to: $email");
+        }
+        
+    } catch (Exception $e) {
+        error_log("Email sending error: " . $e->getMessage());
+    }
+    
     echo json_encode([
         'success' => true, 
-        'message' => 'Thank you for your generous donation!',
+        'message' => 'Thank you for your generous donation! A receipt has been sent to your email.',
         'donation_id' => $donation_id,
         'transaction_id' => $transaction_id,
         'amount_usd' => number_format($amount_usd, 2),

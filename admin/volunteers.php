@@ -36,8 +36,41 @@ if ($_POST && isset($_POST['action']) && $_POST['action'] === 'update_status') {
         }
         
         if (mysqli_stmt_execute($stmt)) {
-            // Store success message in session
-            $_SESSION['success_message'] = "Volunteer status updated successfully!";
+            // Send approval email if status is 'approved'
+            if ($status === 'approved') {
+                try {
+                    // Get volunteer data for email
+                    $volunteer_query = "SELECT * FROM volunteers WHERE id = ?";
+                    $volunteer_stmt = mysqli_prepare($conn, $volunteer_query);
+                    mysqli_stmt_bind_param($volunteer_stmt, "i", $volunteer_id);
+                    mysqli_stmt_execute($volunteer_stmt);
+                    $volunteer_result = mysqli_stmt_get_result($volunteer_stmt);
+                    $volunteer_data = mysqli_fetch_assoc($volunteer_result);
+                    mysqli_stmt_close($volunteer_stmt);
+                    
+                    if ($volunteer_data) {
+                        require_once '../config/email_config.php';
+                        require_once '../includes/SMTPEmailHandler.php';
+                        
+                        $emailHandler = new EmailHandler();
+                        $email_sent = $emailHandler->sendVolunteerApproval($volunteer_data);
+                        
+                        if ($email_sent) {
+                            error_log("Volunteer approval email sent successfully to: " . $volunteer_data['email']);
+                            $_SESSION['success_message'] = "Volunteer status updated successfully! Approval email sent.";
+                        } else {
+                            error_log("Failed to send volunteer approval email to: " . $volunteer_data['email']);
+                            $_SESSION['success_message'] = "Volunteer status updated successfully! (Email sending failed)";
+                        }
+                    }
+                    
+                } catch (Exception $e) {
+                    error_log("Email sending error: " . $e->getMessage());
+                    $_SESSION['success_message'] = "Volunteer status updated successfully! (Email sending failed)";
+                }
+            } else {
+                $_SESSION['success_message'] = "Volunteer status updated successfully!";
+            }
         } else {
             // Store error message in session
             $_SESSION['error_message'] = "Failed to update volunteer status.";
