@@ -275,7 +275,7 @@ mysqli_close($conn);
         
         <div class="print-actions no-print">
             <button onclick="window.print()" class="print-btn">
-                🖨️ Print Receipt
+                🖨️ Download Receipt
             </button>
             <a href="donation-success.php?id=<?php echo $donation['id']; ?>&txn=<?php echo urlencode($donation['transaction_id']); ?>" class="print-btn secondary">
                 ← Back to Success Page

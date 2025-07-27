@@ -1,6 +1,4 @@
 <?php
-// Email Configuration
-// Load from .env file if it exists, otherwise use defaults
 
 // Function to load .env file
 function loadEnvFile($path) {

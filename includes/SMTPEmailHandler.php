@@ -231,17 +231,28 @@ class SMTPMailer {
      * Build complete email data
      */
     private function buildEmailData($to_email, $to_name, $subject, $html_body, $attachments = []) {
-        $boundary = "----=_Part_" . md5(time());
-        
         $headers = [];
         $headers[] = "From: {$this->from_name} <{$this->from_email}>";
         $headers[] = "To: $to_name <$to_email>";
         $headers[] = "Subject: $subject";
         $headers[] = "MIME-Version: 1.0";
-        $headers[] = "Content-Type: multipart/mixed; boundary=\"$boundary\"";
         $headers[] = "Date: " . date('r');
         $headers[] = "Message-ID: <" . md5(time()) . "@" . $this->smtp_host . ">";
         
+        $body = implode("\r\n", $headers) . "\r\n\r\n";
+        
+        // If no attachments, send simple HTML email
+        if (empty($attachments)) {
+            $body = implode("\r\n", $headers) . "\r\n";
+            $body .= "Content-Type: text/html; charset=UTF-8\r\n";
+            $body .= "Content-Transfer-Encoding: 8bit\r\n\r\n";
+            $body .= $html_body . "\r\n";
+            return $body;
+        }
+        
+        // With attachments, use multipart
+        $boundary = "----=_Part_" . md5(time());
+        $headers[] = "Content-Type: multipart/mixed; boundary=\"$boundary\"";
         $body = implode("\r\n", $headers) . "\r\n\r\n";
         
         // Add HTML content
@@ -341,23 +352,8 @@ class EmailHandler {
         // Load email template
         $html_body = $this->getDonationEmailTemplate($donation_data);
         
-        // Generate PDF invoice
-        $pdf_path = $this->generateInvoicePDF($donation_data);
-        
-        // Send email with attachment
-        $attachments = [];
-        if ($pdf_path && file_exists($pdf_path)) {
-            $attachments[] = $pdf_path;
-        }
-        
-        $result = $this->mailer->send($to_email, $to_name, $subject, $html_body, $attachments);
-        
-        // Clean up temporary PDF file
-        if ($pdf_path && file_exists($pdf_path)) {
-            unlink($pdf_path);
-        }
-        
-        return $result;
+        // Send email without attachment - receipt is available via download link
+        return $this->mailer->send($to_email, $to_name, $subject, $html_body);
     }
     
     /**
@@ -384,6 +380,10 @@ class EmailHandler {
         $amount_bdt = number_format($donation_data['amount_bdt'], 2);
         $purpose = $donation_data['purpose'];
         $date = date('F j, Y', strtotime($donation_data['created_at']));
+        $donation_id = $donation_data['id'];
+        
+        // Create download link for receipt
+        $receipt_link = ORG_WEBSITE . "/pages/receipt.php?id=$donation_id&txn=$transaction_id";
         
         $html = "
         <!DOCTYPE html>
@@ -444,10 +444,23 @@ class EmailHandler {
                     <div style='background-color: white; padding: 15px; border-radius: 5px;'>
                         <h3>What happens next?</h3>
                         <ul>
-                            <li>Your donation receipt is attached to this email</li>
+                            <li><strong>Download your receipt:</strong> <a href='$receipt_link' style='color: #2c5aa0; text-decoration: none; font-weight: bold;'>Click here to download your official receipt</a></li>
                             <li>We'll keep you updated on how your donation is being used</li>
                             <li>You'll receive our newsletter with updates on our projects</li>
                         </ul>
+                        
+                        <div style='background-color: #e3f2fd; padding: 15px; border-left: 4px solid #2196f3; margin-top: 15px; border-radius: 4px;'>
+                            <h4 style='margin-top: 0; color: #1976d2;'>📄 Your Receipt</h4>
+                            <p style='margin-bottom: 0;'>Click the link below to download your official donation receipt:</p>
+                            <p style='margin: 10px 0;'>
+                                <a href='$receipt_link' style='background-color: #2c5aa0; color: white; padding: 12px 24px; text-decoration: none; border-radius: 5px; display: inline-block; font-weight: bold;'>
+                                    📥 Download Receipt
+                                </a>
+                            </p>
+                            <p style='font-size: 12px; color: #666; margin-bottom: 0;'>
+                                Receipt ID: $transaction_id | Valid for tax purposes
+                            </p>
+                        </div>
                     </div>
                 </div>
                 
@@ -553,14 +566,6 @@ class EmailHandler {
         </html>";
         
         return $html;
-    }
-    
-    /**
-     * Generate PDF invoice for donation
-     */
-    private function generateInvoicePDF($donation_data) {
-        require_once 'InvoicePDFGenerator.php';
-        return InvoicePDFGenerator::generateDonationInvoice($donation_data);
     }
 }
 ?>
