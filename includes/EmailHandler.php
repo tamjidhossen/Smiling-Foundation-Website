@@ -31,8 +31,6 @@ class EmailHandler {
             $headers[] = "X-Mailer: PHP/" . phpversion();
             $headers[] = "X-Priority: 3";
             
-            // For local development, use PHP's mail() function
-            // In production, you would use PHPMailer or similar
             $header_string = implode("\r\n", $headers);
             
             // Send email
