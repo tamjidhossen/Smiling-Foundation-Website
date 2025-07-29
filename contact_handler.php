@@ -1,6 +1,8 @@
 <?php
 require_once 'config/config.php';
 require_once 'config/database.php';
+require_once 'config/email_config.php';
+require_once 'includes/SMTPEmailHandler.php';
 
 header('Content-Type: application/json');
 
@@ -57,7 +59,39 @@ if (!$stmt) {
 mysqli_stmt_bind_param($stmt, "sssss", $name, $email, $phone, $subject, $message);
 
 if (mysqli_stmt_execute($stmt)) {
-    echo json_encode(['success' => true, 'message' => 'Thank you for your message! We will get back to you soon.']);
+    // Prepare contact data for email
+    $contact_data = [
+        'name' => $name,
+        'email' => $email,
+        'phone' => $phone,
+        'subject' => $subject,
+        'message' => $message
+    ];
+    
+    // Try to send email notification to admin
+    try {
+        $emailHandler = new EmailHandler();
+        $email_sent = $emailHandler->sendContactNotification($contact_data);
+        
+        if ($email_sent) {
+            echo json_encode([
+                'success' => true, 
+                'message' => 'Thank you for your message! We will get back to you soon.'
+            ]);
+        } else {
+            echo json_encode([
+                'success' => true, 
+                'message' => 'Your message has been saved successfully. We will get back to you soon.'
+            ]);
+        }
+    } catch (Exception $e) {
+        // Even if email fails, the message was saved to database
+        error_log("Contact email failed: " . $e->getMessage());
+        echo json_encode([
+            'success' => true, 
+            'message' => 'Your message has been saved successfully. We will get back to you soon.'
+        ]);
+    }
 } else {
     echo json_encode(['success' => false, 'message' => 'Failed to send message. Please try again.']);
 }

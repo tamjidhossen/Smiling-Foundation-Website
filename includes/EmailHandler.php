@@ -20,7 +20,7 @@ class EmailHandler {
     /**
      * Send email using Gmail SMTP
      */
-    public function sendEmail($to_email, $to_name, $subject, $html_body, $plain_body = '', $attachments = []) {
+    public function sendEmail($to_email, $to_name, $subject, $html_body, $plain_body = '') {
         try {
             // Headers
             $headers = [];
@@ -63,21 +63,8 @@ class EmailHandler {
         // Load email template
         $html_body = $this->getDonationEmailTemplate($donation_data);
         
-        // Generate PDF invoice
-        $pdf_path = $this->generateInvoicePDF($donation_data);
-        
-        // Send email with attachment
-        $attachments = [];
-        if ($pdf_path && file_exists($pdf_path)) {
-            $attachments[] = $pdf_path;
-        }
-        
-        $result = $this->sendEmail($to_email, $to_name, $subject, $html_body, '', $attachments);
-        
-        // Clean up temporary PDF file
-        if ($pdf_path && file_exists($pdf_path)) {
-            unlink($pdf_path);
-        }
+        // Send email without attachment - receipt is available via download link
+        $result = $this->sendEmail($to_email, $to_name, $subject, $html_body);
         
         return $result;
     }
@@ -275,58 +262,6 @@ class EmailHandler {
         </html>";
         
         return $html;
-    }
-    
-    /**
-     * Generate PDF invoice for donation
-     */
-    private function generateInvoicePDF($donation_data) {
-        // For now, create a simple text-based invoice
-        // In production, you would use a PDF library like TCPDF or FPDF
-        
-        $transaction_id = $donation_data['transaction_id'];
-        $pdf_filename = "invoice_" . $transaction_id . ".txt";
-        $pdf_path = PDF_TEMP_PATH . $pdf_filename;
-        
-        $invoice_content = "
-SMILING FOUNDATION
-DONATION INVOICE
-" . str_repeat("=", 50) . "
-
-Invoice #: {$donation_data['transaction_id']}
-Date: " . date('F j, Y', strtotime($donation_data['created_at'])) . "
-Donor: {$donation_data['donor_name']}
-Email: {$donation_data['email']}
-
-" . str_repeat("-", 50) . "
-DONATION DETAILS
-" . str_repeat("-", 50) . "
-
-Purpose: {$donation_data['purpose']}
-Amount (USD): $" . number_format($donation_data['amount_usd'], 2) . "
-Amount (BDT): ৳" . number_format($donation_data['amount_bdt'], 2) . "
-Status: Completed
-
-" . str_repeat("-", 50) . "
-
-Thank you for your generous donation!
-Your contribution will make a real difference.
-
-" . ORG_NAME . "
-" . ORG_ADDRESS . "
-" . ORG_PHONE . "
-" . ORG_WEBSITE . "
-
-" . str_repeat("=", 50) . "
-This is a computer-generated invoice.
-";
-        
-        // Write to temporary file
-        if (file_put_contents($pdf_path, $invoice_content)) {
-            return $pdf_path;
-        }
-        
-        return false;
     }
 }
 ?>

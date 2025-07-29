@@ -50,12 +50,4 @@ define('ORG_WEBSITE', 'http://localhost/smilingfoundation');
 
 // Email templates path
 define('EMAIL_TEMPLATES_PATH', dirname(__FILE__) . '/templates/');
-
-// PDF settings
-define('PDF_TEMP_PATH', dirname(__DIR__) . '/temp/pdf/');
-
-// Create temp directory if it doesn't exist
-if (!file_exists(PDF_TEMP_PATH)) {
-    mkdir(PDF_TEMP_PATH, 0755, true);
-}
 ?>

@@ -35,7 +35,7 @@ class SMTPMailer {
     /**
      * Send email via SMTP
      */
-    public function send($to_email, $to_name, $subject, $html_body, $attachments = []) {
+    public function send($to_email, $to_name, $subject, $html_body) {
         try {
             // Connect to SMTP server
             if (!$this->connect()) {
@@ -58,7 +58,7 @@ class SMTPMailer {
             }
             
             // Send DATA command and email content
-            if (!$this->sendData($to_email, $to_name, $subject, $html_body, $attachments)) {
+            if (!$this->sendData($to_email, $to_name, $subject, $html_body)) {
                 return false;
             }
             
@@ -113,7 +113,8 @@ class SMTPMailer {
         }
         
         // Send EHLO command
-        $this->sendCommand("EHLO " . $_SERVER['SERVER_NAME'] ?? 'localhost');
+        $server_name = $_SERVER['SERVER_NAME'] ?? 'localhost';
+        $this->sendCommand("EHLO " . $server_name);
         $response = $this->getResponse();
         
         // Start TLS if using STARTTLS
@@ -128,7 +129,7 @@ class SMTPMailer {
                 }
                 
                 // Send EHLO again after STARTTLS
-                $this->sendCommand("EHLO " . $_SERVER['SERVER_NAME'] ?? 'localhost');
+                $this->sendCommand("EHLO " . $server_name);
                 $response = $this->getResponse();
             }
         }
@@ -203,7 +204,7 @@ class SMTPMailer {
     /**
      * Send email data
      */
-    private function sendData($to_email, $to_name, $subject, $html_body, $attachments = []) {
+    private function sendData($to_email, $to_name, $subject, $html_body) {
         $this->sendCommand("DATA");
         $response = $this->getResponse();
         
@@ -213,7 +214,7 @@ class SMTPMailer {
         }
         
         // Build email headers and body
-        $email_data = $this->buildEmailData($to_email, $to_name, $subject, $html_body, $attachments);
+        $email_data = $this->buildEmailData($to_email, $to_name, $subject, $html_body);
         
         // Send email data
         $this->sendCommand($email_data . "\r\n.");
@@ -230,7 +231,7 @@ class SMTPMailer {
     /**
      * Build complete email data
      */
-    private function buildEmailData($to_email, $to_name, $subject, $html_body, $attachments = []) {
+    private function buildEmailData($to_email, $to_name, $subject, $html_body) {
         $headers = [];
         $headers[] = "From: {$this->from_name} <{$this->from_email}>";
         $headers[] = "To: $to_name <$to_email>";
@@ -238,44 +239,11 @@ class SMTPMailer {
         $headers[] = "MIME-Version: 1.0";
         $headers[] = "Date: " . date('r');
         $headers[] = "Message-ID: <" . md5(time()) . "@" . $this->smtp_host . ">";
+        $headers[] = "Content-Type: text/html; charset=UTF-8";
+        $headers[] = "Content-Transfer-Encoding: 8bit";
         
         $body = implode("\r\n", $headers) . "\r\n\r\n";
-        
-        // If no attachments, send simple HTML email
-        if (empty($attachments)) {
-            $body = implode("\r\n", $headers) . "\r\n";
-            $body .= "Content-Type: text/html; charset=UTF-8\r\n";
-            $body .= "Content-Transfer-Encoding: 8bit\r\n\r\n";
-            $body .= $html_body . "\r\n";
-            return $body;
-        }
-        
-        // With attachments, use multipart
-        $boundary = "----=_Part_" . md5(time());
-        $headers[] = "Content-Type: multipart/mixed; boundary=\"$boundary\"";
-        $body = implode("\r\n", $headers) . "\r\n\r\n";
-        
-        // Add HTML content
-        $body .= "--$boundary\r\n";
-        $body .= "Content-Type: text/html; charset=UTF-8\r\n";
-        $body .= "Content-Transfer-Encoding: 8bit\r\n\r\n";
-        $body .= $html_body . "\r\n\r\n";
-        
-        // Add attachments
-        foreach ($attachments as $attachment) {
-            if (file_exists($attachment)) {
-                $filename = basename($attachment);
-                $content = base64_encode(file_get_contents($attachment));
-                
-                $body .= "--$boundary\r\n";
-                $body .= "Content-Type: application/octet-stream; name=\"$filename\"\r\n";
-                $body .= "Content-Transfer-Encoding: base64\r\n";
-                $body .= "Content-Disposition: attachment; filename=\"$filename\"\r\n\r\n";
-                $body .= chunk_split($content) . "\r\n";
-            }
-        }
-        
-        $body .= "--$boundary--\r\n";
+        $body .= $html_body . "\r\n";
         
         return $body;
     }
@@ -335,7 +303,7 @@ class SMTPMailer {
  * Enhanced Email Handler using SMTP
  */
 class EmailHandler {
-    private $mailer;
+    public $mailer;
     
     public function __construct() {
         $this->mailer = new SMTPMailer();
@@ -366,6 +334,21 @@ class EmailHandler {
         
         // Load email template
         $html_body = $this->getVolunteerApprovalTemplate($volunteer_data);
+        
+        return $this->mailer->send($to_email, $to_name, $subject, $html_body);
+    }
+    
+    /**
+     * Send contact form notification to admin
+     */
+    public function sendContactNotification($contact_data) {
+        // Send to admin email (GMAIL_USERNAME from .env)
+        $to_email = SMTP_USERNAME; // This is the admin email
+        $to_name = "Admin";
+        $subject = "New Contact Form Submission: " . $contact_data['subject'];
+        
+        // Load email template
+        $html_body = $this->getContactNotificationTemplate($contact_data);
         
         return $this->mailer->send($to_email, $to_name, $subject, $html_body);
     }
@@ -470,6 +453,89 @@ class EmailHandler {
                     <p>Phone: " . ORG_PHONE . "</p>
                     <p>Website: <a href='" . ORG_WEBSITE . "'>" . ORG_WEBSITE . "</a></p>
                     <p><em>This is an automated email. Please do not reply to this email address.</em></p>
+                </div>
+            </div>
+        </body>
+        </html>";
+        
+        return $html;
+    }
+    
+    /**
+     * Generate contact notification email template for admin
+     */
+    private function getContactNotificationTemplate($contact_data) {
+        $name = htmlspecialchars($contact_data['name']);
+        $email = htmlspecialchars($contact_data['email']);
+        $phone = htmlspecialchars($contact_data['phone'] ?? 'Not provided');
+        $subject = htmlspecialchars($contact_data['subject']);
+        $message = nl2br(htmlspecialchars($contact_data['message']));
+        $date = date('F j, Y \a\t g:i A');
+        
+        $html = "
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset='UTF-8'>
+            <title>New Contact Form Submission</title>
+            <style>
+                body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+                .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+                .header { background-color: #2c5aa0; color: white; padding: 20px; text-align: center; border-radius: 8px 8px 0 0; }
+                .content { padding: 20px; background-color: #f9f9f9; }
+                .contact-details { background-color: white; padding: 20px; margin: 20px 0; border-radius: 8px; border-left: 4px solid #2c5aa0; }
+                .message-box { background-color: #fff; padding: 20px; margin: 20px 0; border-radius: 8px; border: 1px solid #ddd; }
+                .info-row { margin: 10px 0; padding: 8px 0; border-bottom: 1px solid #eee; }
+                .info-label { font-weight: bold; color: #2c5aa0; display: inline-block; width: 100px; }
+                .footer { text-align: center; padding: 20px; color: #666; font-size: 14px; border-radius: 0 0 8px 8px; background-color: #f0f0f0; }
+            </style>
+        </head>
+        <body>
+            <div class='container'>
+                <div class='header'>
+                    <h1>📧 New Contact Form Submission</h1>
+                    <p>Someone has submitted a message through your website</p>
+                </div>
+                
+                <div class='content'>
+                    <div class='contact-details'>
+                        <h2>Contact Information</h2>
+                        <div class='info-row'>
+                            <span class='info-label'>Name:</span> $name
+                        </div>
+                        <div class='info-row'>
+                            <span class='info-label'>Email:</span> <a href='mailto:$email'>$email</a>
+                        </div>
+                        <div class='info-row'>
+                            <span class='info-label'>Phone:</span> $phone
+                        </div>
+                        <div class='info-row'>
+                            <span class='info-label'>Subject:</span> $subject
+                        </div>
+                        <div class='info-row'>
+                            <span class='info-label'>Date:</span> $date
+                        </div>
+                    </div>
+                    
+                    <div class='message-box'>
+                        <h3>Message:</h3>
+                        <div style='background-color: #f8f9fa; padding: 15px; border-radius: 5px; border-left: 3px solid #2c5aa0;'>
+                            $message
+                        </div>
+                    </div>
+                    
+                    <div style='background-color: #e3f2fd; padding: 15px; border-radius: 8px; margin: 20px 0;'>
+                        <h3 style='margin-top: 0; color: #1976d2;'>📞 Quick Actions</h3>
+                        <p><strong>Reply directly:</strong> <a href='mailto:$email?subject=Re: $subject'>Click here to reply to $name</a></p>
+                        <p><strong>Call:</strong> $phone</p>
+                        <p><strong>View in admin panel:</strong> Log in to your admin dashboard to manage this contact</p>
+                    </div>
+                </div>
+                
+                <div class='footer'>
+                    <p><strong>Smiling Foundation - Contact Management System</strong></p>
+                    <p>This is an automated notification from your website contact form.</p>
+                    <p><em>Received at: $date</em></p>
                 </div>
             </div>
         </body>
